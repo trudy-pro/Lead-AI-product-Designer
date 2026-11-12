@@ -131,13 +131,35 @@ export function CaseStudyVideo({ src, poster, label, caption, className = "" }: 
   );
 }
 
-export function EditorialContentSection({ id, index, label, title, children }: {
+export function EditorialContentSection({ id, index, label, title, children, introduction }: {
   id: string; index: number; label: string; title: string; children: ReactNode;
+  introduction?: { heading?: string; text: string; label: string; value: string; caption: string } | undefined;
 }) {
   return (
-    <section id={id} aria-labelledby={`${id}-h`} className="scroll-mt-20 pt-28 lg:scroll-mt-12 lg:pt-40">
-      <p className="mb-5 text-[13px] text-muted-foreground"><span className="tabular-nums">{String(index).padStart(2, "0")}</span> — {label}</p>
-      <h2 id={`${id}-h`} className="mb-10 max-w-[760px] text-[36px] font-semibold leading-[1.08] tracking-[-0.02em] sm:text-[52px]">{title}</h2>
+    <section id={id} aria-labelledby={`${id}-h`} data-continuation={!title || undefined} className={title ? "scroll-mt-20 pt-28 lg:scroll-mt-12 lg:pt-40" : "scroll-mt-20 pt-6 lg:scroll-mt-12"}>
+      <p className={title ? "mb-5 text-[13px] text-muted-foreground" : "sr-only"}><span className="tabular-nums">{String(index).padStart(2, "0")}</span> — {label}</p>
+      <div className={introduction ? "mb-10 grid items-center gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,0.9fr)] md:gap-10" : undefined}>
+      <div>
+      <h2 id={`${id}-h`} className={title ? "mb-10 max-w-[760px] text-[36px] font-semibold leading-[1.08] tracking-[-0.02em] sm:text-[52px]" : "sr-only"}>
+        {introduction && title === "One language. Every interface." ? <>One language.<br />Every interface.</> : (title || label).split(/(\*\*.*?\*\*|\*[^*]+\*|\n)/g).map((part, i) =>
+          part.startsWith("**") && part.endsWith("**")
+            ? <strong key={i} className="font-bold">{part.slice(2, -2)}</strong>
+            : part.startsWith("*") && part.endsWith("*")
+              ? <em key={i}>{part.slice(1, -1)}</em>
+              : part === "\n" ? <br key={i} /> : part,
+        )}
+      </h2>
+      {introduction?.heading && <h3 className="mb-3 text-[23px] font-semibold leading-tight">{introduction.heading}</h3>}
+      {introduction && <p className="max-w-[680px] text-[17px] leading-[1.65] text-muted-foreground sm:text-[20px]">{introduction.text}</p>}
+      </div>
+      {introduction && (
+        <aside className="rounded-2xl bg-muted p-6 sm:p-8">
+          <p className="text-[12px] uppercase text-muted-foreground">{introduction.label}</p>
+          <p className="my-4 text-[80px] font-semibold leading-none tracking-[-0.06em] sm:text-[104px]">{introduction.value}</p>
+          <p className="max-w-[280px] text-[14px] leading-[1.6] text-muted-foreground">{introduction.caption}</p>
+        </aside>
+      )}
+      </div>
       <div className="space-y-12">{children}</div>
     </section>
   );
@@ -153,5 +175,19 @@ export function NextProjectNavigation() {
       <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground">← Back to all projects</Link>
       <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="text-muted-foreground transition-colors hover:text-foreground">Back to top ↑</button>
     </nav>
+  );
+}
+
+/** Labelled group of chips used in case-study headers (Role, Year, Project type…). */
+export function ProjectDetail({ label, values, className = "" }: { label: string; values: string[]; className?: string }) {
+  return (
+    <div className={className}>
+      <dt className="text-[13px] font-normal leading-5 text-muted-foreground">{label}</dt>
+      <dd className="mt-3 flex flex-wrap gap-2">
+        {values.map((value) => (
+          <span key={value} className="rounded-lg bg-foreground/[0.055] px-2.5 py-1 text-[13px] font-normal leading-[21px] text-foreground/75">{value}</span>
+        ))}
+      </dd>
+    </div>
   );
 }

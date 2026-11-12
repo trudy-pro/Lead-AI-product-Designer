@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="FadäRhy case study: a founder journey, reusable product design system and product evaluation plan, using FadäRhy's official component catalog.">
+<title>FadäRhy — Founder journey, design system & evals</title>
+<style>
+/* Design tokens transcribed verbatim from the supplied FadäRhy component catalog. */
+:root {
+  --primitive-color-f4f6fb: #f4f6fb;
+  --primitive-color-2a2a2a: #2a2a2a;
+  --primitive-color-eef6fb: #eef6fb;
+  --primitive-color-f2f2f2: #f2f2f2;
+  --primitive-color-e4e4ea: #e4e4ea;
+  --primitive-color-2446f5: #2446f5;
+  --primitive-color-1935be: #1935be;
+  --primitive-color-d8dfff: #d8dfff;
+  --primitive-color-1e3edb: #1e3edb;
+  --primitive-color-ffffff: #ffffff;
+  --primitive-color-6f7696: #6f7696;
+  --primitive-color-b42318: #b42318;
+  --primitive-color-fdecea: #fdecea;
+  --primitive-color-0b5ed7: #0b5ed7;
+  --primitive-color-e3eeff: #e3eeff;
+  --primitive-color-5c5c66: #5c5c66;
+  --primitive-color-6b6b76: #6b6b76;
+  --primitive-color-eef0e8: #eef0e8;
+  --primitive-color-dce4fe: #dce4fe;
+  --primitive-color-1a7f4b: #1a7f4b;
+  --primitive-color-e6f4ec: #e6f4ec;
+  --primitive-color-d6ff3f: #d6ff3f;
+  --primitive-color-8a5a00: #8a5a00;
+  --primitive-color-fff3d6: #fff3d6;
+  --primitive-color-edfbf3: #edfbf3;
+  --primitive-color-2f7a56: #2f7a56;
+  --primitive-color-000000: #000000;
+  --primitive-color-16p0-24p0-40p0-0p04: rgb(16 24 40 / 0.04);
+  --primitive-color-16p0-24p0-40p0-0p06: rgb(16 24 40 / 0.06);
+  --primitive-color-36p0-70p0-245p0-0p18: rgb(36 70 245 / 0.18);
+  --primitive-color-16p0-24p0-40p0-0p1: rgb(16 24 40 / 0.1);
+  --primitive-color-11120f: #11120f;
+  --primitive-color-121614: #121614;
+  --primitive-color-2e3029: #2e3029;
+  --primitive-color-afd21f: #afd21f;
+  --primitive-color-c4eb2e: #c4eb2e;
+  --primitive-color-7b8073: #7b8073;
+  --primitive-color-1c1d19: #1c1d19;
+  --primitive-color-ff8a80: #ff8a80;
+  --primitive-color-3a1613: #3a1613;
+  --primitive-color-8fb0ff: #8fb0ff;
+  --primitive-color-112a66: #112a66;
+  --primitive-color-a8ad9f: #a8ad9f;
+  --primitive-color-2a3308: #2a3308;
+  --primitive-color-6fd39a: #6fd39a;
+  --primitive-color-11301f: #11301f;
+  --primitive-color-f2c14e: #f2c14e;
+  --primitive-color-33280a: #33280a;
+  --primitive-color-0p0-0p0-0p0-0p3: rgb(0 0 0 / 0.3);
+  --primitive-color-0p0-0p0-0p0-0p6: rgb(0 0 0 / 0.6);
+  --primitive-color-0p0-0p0-0p0-0p5: rgb(0 0 0 / 0.5);
+  --primitive-color-0p0-0p0-0p0-0p0: rgb(0 0 0 / 0);
+  --primitive-color-f8f9fc: #f8f9fc;
+  --primitive-color-e2e4ea: #e2e4ea;
+}
+:root, [data-theme="light"] {
+  --accent: var(--primitive-color-f4f6fb);
+  --accent-foreground: var(--primitive-color-2a2a2a);
+  --aqua-wash: var(--primitive-color-eef6fb);
+  --auth-foreground: var(--primitive-color-ffffff);
+  --auth-mark: var(--primitive-color-ffffff);
+  --auth-mark-foreground: var(--primitive-color-2446f5);
+  --auth-surface: var(--primitive-color-2446f5);
+  --background: var(--primitive-color-f2f2f2);
+  --banner: var(--primitive-color-2a2a2a);
+  --banner-badge: var(--primitive-color-eef0e8);
+  --banner-badge-foreground: var(--primitive-color-2a2a2a);
+  --banner-foreground: var(--primitive-color-eef0e8);
+  --border: var(--primitive-color-e4e4ea);
+  --card: var(--primitive-color-ffffff);
+  --card-foreground: var(--primitive-color-2a2a2a);
+  --destructive: var(--primitive-color-b42318);
+  --destructive-foreground: var(--primitive-color-ffffff);
+  --error: var(--primitive-color-b42318);
+  --error-soft: var(--primitive-color-fdecea);
+  --focus-ring: var(--primitive-color-2446f5);
+  --foreground: var(--primitive-color-2a2a2a);
+  --info: var(--primitive-color-0b5ed7);
+  --info-soft: var(--primitive-color-e3eeff);
+  --ink: var(--primitive-color-2a2a2a);
+  --ink-muted: var(--primitive-color-5c5c66);
+  --input: var(--primitive-color-e4e4ea);
+  --line: var(--primitive-color-e4e4ea);
+  --line-strong: var(--primitive-color-6b6b76);
+  --link: var(--primitive-color-2446f5);
+  --match: var(--primitive-color-edfbf3);
+  --match-foreground: var(--primitive-color-2f7a56);
+  --media-foreground: var(--primitive-color-ffffff);
+  --mist: var(--primitive-color-eef0e8);
+  --muted: var(--primitive-color-f4f6fb);
+  --muted-foreground: var(--primitive-color-5c5c66);
+  --night: var(--primitive-color-2a2a2a);
+  --on-rhine-blue: var(--primitive-color-ffffff);
+  --on-thread-lime: var(--primitive-color-2a2a2a);
+  --popover: var(--primitive-color-ffffff);
+  --popover-foreground: var(--primitive-color-2a2a2a);
+  --primary: var(--primitive-color-2446f5);
+  --primary-disabled: var(--primitive-color-e4e4ea);
+  --primary-disabled-foreground: var(--primitive-color-5c5c66);
+  --primary-foreground: var(--primitive-color-ffffff);
+  --primary-hover: var(--primitive-color-1e3edb);
+  --primary-pressed: var(--primitive-color-1935be);
+  --rhine-blue: var(--primitive-color-2446f5);
+  --rhine-blue-soft: var(--primitive-color-dce4fe);
+  --ring: var(--primitive-color-2446f5);
+  --scrim: var(--primitive-color-000000);
+  --secondary: var(--primitive-color-f4f6fb);
+  --secondary-foreground: var(--primitive-color-2a2a2a);
+  --section: var(--primitive-color-f4f6fb);
+  --section-subtle: var(--primitive-color-f8f9fc);
+  --shadow-product-1: var(--primitive-color-16p0-24p0-40p0-0p04);
+  --shadow-product-2: var(--primitive-color-16p0-24p0-40p0-0p06);
+  --shadow-product-3: var(--primitive-color-36p0-70p0-245p0-0p18);
+  --shadow-step-1: var(--primitive-color-16p0-24p0-40p0-0p04);
+  --shadow-step-2: var(--primitive-color-16p0-24p0-40p0-0p1);
+  --sidebar: var(--primitive-color-ffffff);
+  --sidebar-accent: var(--primitive-color-f4f6fb);
+  --sidebar-accent-foreground: var(--primitive-color-2a2a2a);
+  --sidebar-border: var(--primitive-color-e4e4ea);
+  --sidebar-foreground: var(--primitive-color-2a2a2a);
+  --sidebar-primary: var(--primitive-color-2446f5);
+  --sidebar-primary-foreground: var(--primitive-color-ffffff);
+  --sidebar-ring: var(--primitive-color-2446f5);
+  --success: var(--primitive-color-1a7f4b);
+  --success-soft: var(--primitive-color-e6f4ec);
+  --surface: var(--primitive-color-ffffff);
+  --thread-lime: var(--primitive-color-d6ff3f);
+  --warning: var(--primitive-color-8a5a00);
+  --warning-soft: var(--primitive-color-fff3d6);
+  --card-outline: var(--primitive-color-e2e4ea);
+}
+[data-theme="dark"] {
+  --accent: var(--primitive-color-11120f);
+  --accent-foreground: var(--primitive-color-eef0e8);
+  --aqua-wash: var(--primitive-color-121614);
+  --auth-foreground: var(--primitive-color-eef0e8);
+  --auth-mark: var(--primitive-color-d6ff3f);
+  --auth-mark-foreground: var(--primitive-color-2a2a2a);
+  --auth-surface: var(--primitive-color-1c1d19);
+  --background: var(--primitive-color-11120f);
+  --banner: var(--primitive-color-1c1d19);
+  --banner-badge: var(--primitive-color-d6ff3f);
+  --banner-badge-foreground: var(--primitive-color-2a2a2a);
+  --banner-foreground: var(--primitive-color-eef0e8);
+  --border: var(--primitive-color-2e3029);
+  --card: var(--primitive-color-1c1d19);
+  --card-foreground: var(--primitive-color-eef0e8);
+  --destructive: var(--primitive-color-ff8a80);
+  --destructive-foreground: var(--primitive-color-2a2a2a);
+  --error: var(--primitive-color-ff8a80);
+  --error-soft: var(--primitive-color-3a1613);
+  --focus-ring: var(--primitive-color-d6ff3f);
+  --foreground: var(--primitive-color-eef0e8);
+  --info: var(--primitive-color-8fb0ff);
+  --info-soft: var(--primitive-color-112a66);
+  --ink: var(--primitive-color-eef0e8);
+  --ink-muted: var(--primitive-color-a8ad9f);
+  --input: var(--primitive-color-2e3029);
+  --line: var(--primitive-color-2e3029);
+  --line-strong: var(--primitive-color-7b8073);
+  --link: var(--primitive-color-d6ff3f);
+  --match: var(--primitive-color-11301f);
+  --match-foreground: var(--primitive-color-6fd39a);
+  --media-foreground: var(--primitive-color-ffffff);
+  --mist: var(--primitive-color-eef0e8);
+  --muted: var(--primitive-color-11120f);
+  --muted-foreground: var(--primitive-color-a8ad9f);
+  --night: var(--primitive-color-2a2a2a);
+  --on-rhine-blue: var(--primitive-color-2a2a2a);
+  --on-thread-lime: var(--primitive-color-2a2a2a);
+  --popover: var(--primitive-color-1c1d19);
+  --popover-foreground: var(--primitive-color-eef0e8);
+  --primary: var(--primitive-color-d6ff3f);
+  --primary-disabled: var(--primitive-color-2e3029);
+  --primary-disabled-foreground: var(--primitive-color-7b8073);
+  --primary-foreground: var(--primitive-color-2a2a2a);
+  --primary-hover: var(--primitive-color-c4eb2e);
+  --primary-pressed: var(--primitive-color-afd21f);
+  --rhine-blue: var(--primitive-color-d6ff3f);
+  --rhine-blue-soft: var(--primitive-color-2a3308);
+  --ring: var(--primitive-color-d6ff3f);
+  --scrim: var(--primitive-color-000000);
+  --secondary: var(--primitive-color-11120f);
+  --secondary-foreground: var(--primitive-color-eef0e8);
+  --section: var(--primitive-color-11120f);
+  --section-subtle: var(--primitive-color-11120f);
+  --shadow-product-1: var(--primitive-color-0p0-0p0-0p0-0p3);
+  --shadow-product-2: var(--primitive-color-0p0-0p0-0p0-0p6);
+  --shadow-product-3: var(--primitive-color-0p0-0p0-0p0-0p0);
+  --shadow-step-1: var(--primitive-color-0p0-0p0-0p0-0p3);
+  --shadow-step-2: var(--primitive-color-0p0-0p0-0p0-0p5);
+  --sidebar: var(--primitive-color-1c1d19);
+  --sidebar-accent: var(--primitive-color-11120f);
+  --sidebar-accent-foreground: var(--primitive-color-eef0e8);
+  --sidebar-border: var(--primitive-color-2e3029);
+  --sidebar-foreground: var(--primitive-color-eef0e8);
+  --sidebar-primary: var(--primitive-color-d6ff3f);
+  --sidebar-primary-foreground: var(--primitive-color-2a2a2a);
+  --sidebar-ring: var(--primitive-color-d6ff3f);
+  --success: var(--primitive-color-6fd39a);
+  --success-soft: var(--primitive-color-11301f);
+  --surface: var(--primitive-color-1c1d19);
+  --thread-lime: var(--primitive-color-d6ff3f);
+  --warning: var(--primitive-color-f2c14e);
+  --warning-soft: var(--primitive-color-33280a);
+  --card-outline: var(--primitive-color-2e3029);
+}
+:root {
+  color-scheme: light;
+  --radius: 0.5rem;
+  --frame-border-width: 1px;
+  --section-pad: 6rem;
+  --card-pad: 1.5rem;
+  --eyebrow-tracking: 0.18em;
+  --eyebrow-transform: uppercase;
+  --btn-radius: 12px;
+  --chip-radius: 8px;
+  --badge-radius: 12px;
+  --card-radius: 12px;
+  --btn-border-width: 1px;
+  --shadow-card: none;
+  --display-tracking: -0.025em;
+  --shadow-product: 0 1px 2px var(--shadow-product-1), 0 12px 24px -8px var(--shadow-product-2), 0 32px 64px -24px var(--shadow-product-3);
+  --shadow-step: 0 1px 2px var(--shadow-step-1), 0 8px 24px -12px var(--shadow-step-2);
+  --shadow-step-raised: 0 1px 3px var(--shadow-step-2), 0 4px 12px -2px var(--shadow-step-1), 0 16px 40px -12px var(--shadow-step-2);
+  --font-sans: "Neue Frutiger", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Neue Frutiger", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --shadow-product: 0 1px 2px var(--shadow-product-1), 0 32px 64px -24px var(--shadow-product-2);
+  --shadow-step: 0 1px 2px var(--shadow-step-1), 0 8px 24px -12px var(--shadow-step-2);
+  --shadow-step-raised: var(--shadow-step);
+}
+/* Case-study composition using the catalog's existing semantic vocabulary. */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:78px}
+body{margin:0;background:var(--background);color:var(--foreground);font:400 16px/1.6 var(--font-sans);-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-underline-offset:3px} a:hover{text-decoration-thickness:2px}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}button:disabled{cursor:not-allowed}
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px}
+.wrap{max-width:1160px;padding:0 28px;margin:0 auto}
+.mono{font-family:var(--font-mono)}.eyebrow{font:500 11px/1.4 var(--font-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted-foreground)}
+.muted{color:var(--muted-foreground)}.fine{font-size:13px;line-height:1.55}.small{font-size:14px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.h-display{font-size:clamp(45px,6.2vw,80px);font-weight:400;line-height:1.04;letter-spacing:var(--display-tracking);margin:16px 0 0;max-width:920px}
+.h2{font-size:clamp(30px,3.6vw,49px);line-height:1.14;font-weight:400;letter-spacing:-.025em;margin:9px 0 16px}
+.h3{font-size:21px;line-height:1.3;font-weight:500;letter-spacing:-.012em;margin:0}
+p{margin:0} p+p{margin-top:12px} h1,h2,h3,h4{overflow-wrap:break-word}
+header.nav{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--border)}
+.nav-inner{min-height:70px;display:flex;align-items:center;gap:24px;justify-content:space-between}
+.brand{font-size:22px;line-height:1;font-weight:700;letter-spacing:-.06em;color:var(--foreground);text-decoration:none;white-space:nowrap}.brand span{color:var(--link)}
+.nav-links{display:flex;align-items:center;gap:22px;margin-left:auto}.nav-links a{font-size:13px;color:var(--muted-foreground);text-decoration:none;white-space:nowrap}.nav-links a:hover{color:var(--link)}
+.icon-button{border:1px solid var(--border);background:var(--card);color:var(--foreground);border-radius:var(--btn-radius);min-height:38px;padding:7px 12px;font-size:13px}.icon-button:hover{background:var(--secondary)}
+.top-action{white-space:nowrap;font-size:13px;font-weight:600;text-decoration:none;background:var(--primary);color:var(--primary-foreground);border:1px solid var(--primary);border-radius:var(--btn-radius);padding:8px 13px}.top-action:hover{background:var(--primary-hover);color:var(--primary-foreground)}
+.hero{background:var(--card);border-bottom:1px solid var(--border);padding:84px 0 55px}.hero-sub{font-size:20px;line-height:1.55;max-width:690px;color:var(--muted-foreground);margin-top:24px}.blue{color:var(--link)}
+.meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;border-top:1px solid var(--border);padding-top:30px;margin-top:54px}.meta strong{font-size:14px;line-height:1.45;font-weight:500;display:block;margin-top:7px}
+.page-section{padding:92px 0;border-bottom:1px solid var(--border)}.section-grid{display:grid;grid-template-columns:230px minmax(0,1fr);gap:54px}.section-rail{padding-top:9px}.section-copy{max-width:850px}.lead{font-size:19px;line-height:1.56;max-width:760px}.intro-line{margin-bottom:26px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:28px}.card{background:var(--card);border:1px solid var(--border);border-radius:var(--card-radius);padding:23px;min-width:0}.card p{font-size:14px;line-height:1.65;color:var(--muted-foreground);margin-top:10px}
+.ordinal{font:500 12px var(--font-mono);color:var(--link);margin-bottom:17px;display:block}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}.lined-list{list-style:none;padding:0;margin:26px 0 0;border-top:1px solid var(--border)}.lined-list li{display:grid;grid-template-columns:40px 1fr;gap:18px;border-bottom:1px solid var(--border);padding:20px 0}.lined-list .n{font:500 13px var(--font-mono);color:var(--link)}.lined-list b{font-size:16px;font-weight:600}.lined-list p{color:var(--muted-foreground);font-size:14px;line-height:1.6;margin-top:6px}
+.journey{border:1px solid var(--border);border-radius:var(--card-radius);background:var(--card);overflow:hidden;margin-top:28px}.journey-controls{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}.journey-controls button{position:relative;text-align:left;padding:20px 22px;background:transparent;border:0;border-right:1px solid var(--border)}.journey-controls button:last-child{border-right:0}.journey-controls button[aria-pressed="true"]{background:var(--secondary)}.journey-controls button[aria-pressed="true"]:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--primary)}.journey-controls button .number{display:block;font:500 11px var(--font-mono);color:var(--muted-foreground);margin-bottom:8px}.journey-controls button strong{font-size:15px;font-weight:600}
+.journey-main{display:grid;grid-template-columns:minmax(0,.83fr) minmax(0,1.17fr);gap:28px;padding:28px}.journey-main>div:first-child{align-self:center}.journey-title{font-size:29px;font-weight:400;line-height:1.22;margin:12px 0}.journey-desc{font-size:15px;color:var(--muted-foreground);line-height:1.65}.tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.tag{display:inline-block;font:500 11px var(--font-mono);border:1px solid var(--border);background:var(--secondary);color:var(--muted-foreground);border-radius:var(--chip-radius);padding:6px 9px}
+.app-screen{border:1px solid var(--border);border-radius:var(--card-radius);background:var(--background);padding:20px;min-height:310px}.app-top{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:18px}.app-logo{font-size:17px;font-weight:700;letter-spacing:-.06em}.app-logo span{color:var(--link)}.app-tabs{display:flex;flex-wrap:wrap;gap:13px;font-size:10px;color:var(--muted-foreground)}.app-title{font-size:20px;font-weight:500;line-height:1.2;margin:14px 0}.app-label{font-size:11px;font-weight:600;display:block;margin:13px 0 6px}.app-box{border:1px solid var(--input);border-radius:var(--card-radius);background:var(--card);padding:13px 14px;font-size:13px;line-height:1.55}.app-fill{color:var(--muted-foreground)}.app-btn{display:inline-block;background:var(--primary);color:var(--primary-foreground);border-radius:var(--btn-radius);padding:9px 13px;font-size:12px;font-weight:600;margin-top:13px}.app-pill{display:inline-block;background:var(--muted);color:var(--foreground);border:1px solid var(--border);padding:5px 9px;font-size:11px;border-radius:var(--chip-radius);margin:4px 4px 4px 0}.app-match{border:1px solid var(--border);background:var(--card);border-radius:var(--card-radius);padding:12px 14px;margin-top:10px}.app-match-title{font-size:13px;font-weight:600}.app-match-why{font-size:11px;color:var(--muted-foreground);margin-top:5px}.app-match a{font-size:11px}.app-line{background:var(--border);height:6px;border-radius:20px;margin-top:10px}.app-line.short{width:56%}.app-soft{background:var(--match);color:var(--match-foreground);font-size:11px;border-radius:var(--chip-radius);padding:3px 7px}.app-steps{display:grid;gap:10px}.app-step{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--card-radius);font-size:12px}.app-step span{color:var(--link);font:600 11px var(--font-mono)}
+.fig-note{font-size:12px;color:var(--muted-foreground);margin-top:10px}
+.system-intro{display:grid;grid-template-columns:1fr auto;gap:30px;align-items:end}.toggle-wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.mode-btn{border:1px solid var(--border);background:var(--card);border-radius:var(--btn-radius);font-size:12px;padding:8px 12px}.mode-btn[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+.color-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:24px}.swatch{border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;background:var(--card);min-width:0}.swatch-color{height:80px;display:flex;align-items:flex-end;padding:11px;font-size:16px;font-weight:500}.swatch-name{padding:10px 12px}.swatch-name b{display:block;font:500 12px var(--font-mono)}.swatch-name span{display:block;font-size:11px;color:var(--muted-foreground);line-height:1.4;margin-top:4px}
+.foundation-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}.subpanel{background:var(--card);border:1px solid var(--border);border-radius:var(--card-radius);padding:25px}.subpanel h3{font-size:17px;font-weight:600;margin:0 0 9px}.type-sample{padding:15px 0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:94px 1fr;gap:12px;align-items:start}.type-sample:last-child{border:0}.sample-tag{font:11px var(--font-mono);color:var(--muted-foreground);padding-top:7px}.sample-display{font-size:31px;line-height:1.2;font-weight:400}.sample-head{font-size:22px;line-height:1.3}.sample-body{font-size:16px;line-height:1.5}.button-strip{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}.btn{border-radius:var(--btn-radius);border:1px solid transparent;min-height:40px;padding:9px 14px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;transition:background .15s,color .15s}.btn-primary{background:var(--primary);color:var(--primary-foreground)}.btn-primary:hover{background:var(--primary-hover);color:var(--primary-foreground)}.btn-secondary{background:var(--secondary);color:var(--secondary-foreground)}.btn-outline{background:var(--card);border-color:var(--border);color:var(--foreground)}.btn-ghost{background:transparent;color:var(--link)}.btn-link{background:transparent;color:var(--link);text-decoration:underline}.btn-destructive{background:var(--destructive);color:var(--destructive-foreground)}.btn[disabled]{background:var(--primary-disabled);color:var(--primary-disabled-foreground);border-color:transparent}
+.feedbacks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:18px}.status{border-radius:var(--card-radius);padding:13px 15px;font-size:13px}.status b{display:block;font-size:13px;margin-bottom:3px}.success{background:var(--success-soft);color:var(--success)}.warning{background:var(--warning-soft);color:var(--warning)}.info{background:var(--info-soft);color:var(--info)}.error{background:var(--error-soft);color:var(--error)}
+.token-layer{margin-top:20px;border:1px solid var(--border);border-radius:var(--card-radius);padding:20px 24px;background:var(--card)}.mapping{display:grid;grid-template-columns:1fr 24px 1fr;gap:15px;align-items:center;margin-top:12px}.mapping>div{padding:14px;border:1px solid var(--border);border-radius:var(--card-radius);background:var(--background)}.mapping code{font-size:12px}.mapping .arrow{text-align:center;color:var(--link);font-size:22px}.mapping p{font-size:12px;color:var(--muted-foreground);margin-top:4px}
+.process-list{margin-top:26px;border-top:1px solid var(--border)}.process-row{display:grid;grid-template-columns:55px minmax(0,1fr);gap:20px;border-bottom:1px solid var(--border);padding:24px 0}.process-row .proc-n{font:500 13px var(--font-mono);color:var(--link)}.process-row h3{font-size:19px;font-weight:500;margin:0 0 6px}.process-row p{font-size:15px;color:var(--muted-foreground);line-height:1.65;max-width:700px}.process-row code{font-size:13px;background:var(--secondary);padding:1px 5px;border-radius:4px;color:var(--foreground)}
+.check-panel{margin-top:27px;border:1px solid var(--border);border-radius:var(--card-radius);overflow:hidden;background:var(--card)}.check-header{padding:19px 23px;background:var(--secondary);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:20px;align-items:center}.check-header h3{font-size:17px;font-weight:600;margin:0}.check-header span{font:11px var(--font-mono);color:var(--muted-foreground)}
+.review-table{width:100%;border-collapse:collapse;text-align:left;font-size:14px}.review-table th{font:500 11px var(--font-mono);color:var(--muted-foreground);letter-spacing:.06em;text-transform:uppercase;background:var(--card);padding:13px 20px;border-bottom:1px solid var(--border)}.review-table td{padding:15px 20px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}.review-table tr:last-child td{border:0}.review-table td:first-child{font-weight:600;width:26%}.review-table td:last-child{color:var(--muted-foreground)}.table-scroll{overflow:auto}
+.scenarios{margin-top:24px;border:1px solid var(--border);background:var(--card);border-radius:var(--card-radius);overflow:hidden}.scenario-choose{display:flex;gap:7px;flex-wrap:wrap;padding:15px;border-bottom:1px solid var(--border);background:var(--secondary)}.scenario-choose button{font-size:12px;border:1px solid var(--border);background:var(--card);padding:9px 12px;border-radius:var(--chip-radius);text-align:left}.scenario-choose button[aria-pressed="true"]{border-color:var(--primary);background:var(--primary);color:var(--primary-foreground)}.scenario-body{display:grid;grid-template-columns:.9fr 1.1fr;gap:30px;padding:25px}.scenario-body h3{font-size:21px;font-weight:500}.quote{font-size:18px;line-height:1.55;margin-top:14px}.checklist{list-style:none;margin:12px 0 0;padding:0}.checklist li{display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);padding:9px 0;font-size:14px}.checklist li:last-child{border:0}.checklist li:before{content:"";flex:0 0 12px;height:12px;border:1.5px solid var(--link);border-radius:4px;margin-top:5px}.criterion{margin-top:20px;border:1px solid var(--border);border-radius:var(--card-radius);padding:16px;font-size:13px;line-height:1.7;background:var(--secondary)}
+.loop{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:20px}.loop div{border:1px solid var(--border);border-radius:var(--card-radius);padding:14px;background:var(--card);font-size:13px}.loop strong{display:block;font:600 12px var(--font-mono);color:var(--link);margin-bottom:8px}
+.note{padding:17px 20px;border-left:3px solid var(--link);background:var(--card);font-size:13px;color:var(--muted-foreground);margin-top:20px;line-height:1.6}
+.closing{padding:73px 0 95px;background:var(--card)}.closing .h2{max-width:770px}.closing p{font-size:18px;max-width:700px;color:var(--muted-foreground);line-height:1.65}
+footer{padding:24px 0;border-top:1px solid var(--border);background:var(--card)}footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}footer p{font-size:12px;color:var(--muted-foreground)}
+@media(max-width:950px){.section-grid{grid-template-columns:1fr;gap:12px}.page-section{padding:67px 0}.nav-links{display:none}.three,.color-grid{grid-template-columns:repeat(3,1fr)}.foundation-cols{grid-template-columns:1fr}.journey-main{grid-template-columns:1fr}.meta{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:610px){.wrap{padding-inline:17px}.hero{padding:55px 0 36px}.h-display{font-size:clamp(39px,11vw,58px)}.hero-sub{font-size:17px}.meta{gap:20px;margin-top:38px}.three,.color-grid{grid-template-columns:repeat(2,1fr)}.three{gap:9px}.card{padding:17px}.split{grid-template-columns:1fr}.journey-controls{grid-template-columns:repeat(2,1fr)}.journey-controls button:nth-child(2){border-right:0}.journey-controls button{padding:13px}.journey-controls button:nth-child(-n+2){border-bottom:1px solid var(--border)}.journey-main{padding:17px}.app-screen{padding:14px}.scenario-body{grid-template-columns:1fr;gap:20px;padding:18px}.scenario-choose{padding:10px}.scenario-choose button{flex:1 1 calc(50% - 10px)}.loop{grid-template-columns:repeat(2,1fr)}.system-intro{grid-template-columns:1fr}.mapping{grid-template-columns:1fr}.mapping .arrow{transform:rotate(90deg)}.review-table{min-width:620px}.swatch-color{height:65px}.swatch-name{padding:9px}.top-action{display:none}.nav-inner{min-height:63px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+/* Editorial layout additions: composition only, built from existing tokens and classes. */
+.process-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:44px}
+.process-strip a{display:block;text-decoration:none;color:var(--foreground);border:1px solid var(--border);border-radius:var(--card-radius);background:var(--background);padding:16px 18px;transition:background .15s}
+.process-strip a:hover{background:var(--secondary)}
+.process-strip .ordinal{margin-bottom:8px}
+.process-strip b{display:block;font-size:15px;font-weight:600}
+.process-strip span.muted{display:block;font-size:13px;line-height:1.5;margin-top:4px}
+.section-head{max-width:820px}
+.pull{font-size:clamp(22px,2.4vw,29px);line-height:1.35;font-weight:400;letter-spacing:-.015em;border-left:3px solid var(--link);padding-left:22px;margin:34px 0 0;max-width:780px}
+.dir{margin-top:22px;border:1px solid var(--border);border-radius:var(--card-radius);background:var(--card);padding:20px 22px}
+.dir .tagrow{margin-top:12px}
+.journey-controls{grid-template-columns:repeat(3,1fr)}
+.ai-grid .card h3{font-size:18px}
+.score{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:3px solid var(--primary);display:inline-flex;align-items:center;justify-content:center;font:600 11px var(--font-mono);color:var(--foreground)}
+.run{margin-top:24px;display:grid;gap:9px}
+.run .status{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start}
+.run .status b{margin:0}
+@media(max-width:610px){.run .status{grid-template-columns:1fr;gap:4px}}
+@media(max-width:950px){.process-strip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:610px){.process-strip{grid-template-columns:1fr}.journey-controls{grid-template-columns:repeat(3,1fr)}.journey-controls button:nth-child(2){border-right:1px solid var(--border)}.journey-controls button:nth-child(-n+2){border-bottom:0}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap nav-inner">
+<a class="brand" href="#top" aria-label="FadäRhy case study home">Fadä<span>Rhy</span></a>
+<nav class="nav-links" aria-label="Case study sections"><a href="#challenge">Challenge</a><a href="#journey">Journey</a><a href="#system">System</a><a href="#checks">Checks</a><a href="#evals">Evals</a></nav>
+<button class="icon-button" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">◐ &nbsp; Dark</button>
+<a class="top-action" href="https://app.fadarhy.ch/" target="_blank" rel="noreferrer">Open the live app ↗</a>
+</div></header>
+<main id="top">
+
+<section class="hero"><div class="wrap">
+<div class="eyebrow">Case study &nbsp;/&nbsp; FadäRhy &nbsp;/&nbsp; 2026</div>
+<h1 class="h-display">Finding the next right connection in the <span class="blue">Basel innovation ecosystem.</span></h1>
+<p class="hero-sub">FadäRhy turns a founder’s few sentences into ranked matches — labs, investors, partners and experts — each with a reason and a source, plus a 12-month plan. I designed the journey, the shared design system and the way we test both.</p>
+<div class="meta"><div><div class="eyebrow">Role</div><strong>Design co-founder · Product design &amp; frontend</strong></div><div><div class="eyebrow">Team</div><strong>Five people, formed at Hack am Rhein 2026</strong></div><div><div class="eyebrow">Status</div><strong>Live beta · app.fadarhy.ch</strong></div><div><div class="eyebrow">Languages</div><strong>English · Deutsch · Français · Baseldütsch</strong></div></div>
+<nav class="process-strip" aria-label="Process overview">
+<a href="#journey"><span class="ordinal">STEP 01</span><b>Map the journey</b><span class="muted">Describe → Check → Act</span></a>
+<a href="#system"><span class="ordinal">STEP 02</span><b>Unify the system</b><span class="muted">One catalog for the whole team</span></a>
+<a href="#checks"><span class="ordinal">STEP 03</span><b>Check the build</b><span class="muted">Rules people and AI tools follow</span></a>
+<a href="#evals"><span class="ordinal">STEP 04</span><b>Evaluate the advice</b><span class="muted">Can founders trust the route?</span></a>
+</nav>
+</div></section>
+
+<section class="page-section" id="challenge"><div class="wrap section-grid"><div class="section-rail eyebrow">The challenge</div><div class="section-copy">
+<h2 class="h2">The help exists. <span class="blue">The path is unclear.</span></h2>
+<p class="lead">A founder who needs a BSL-2 lab, regulatory advice or a first grant faces dozens of parks, programmes, funds and institutes across Basel and the Upper Rhine. Finding them is not the hard part; knowing which one fits — and what to do next — is.</p>
+<div class="three"><article class="card"><span class="ordinal">01 / INTERPRET</span><h3 class="h3">Show what was understood</h3><p>Founders describe messy situations in plain language. The app must reflect them back and let them correct it.</p></article><article class="card"><span class="ordinal">02 / EXPLAIN</span><h3 class="h3">Earn trust with evidence</h3><p>Every match carries a reason and a source. No unexplained rankings.</p></article><article class="card"><span class="ordinal">03 / ACT</span><h3 class="h3">End on a next step</h3><p>A plan, a shortlist and a draft introduction — not just a list of names.</p></article></div>
+</div></div></section>
+
+<section class="page-section" id="journey"><div class="wrap">
+<div class="section-head"><div class="eyebrow">Step 01 / Map the journey</div><h2 class="h2">From a founder’s question <span class="blue">to a next step.</span></h2><p class="lead">The product follows three moves. Each one answers a single question for the founder, so the screen never asks for more than that moment needs.</p></div>
+<div class="journey"><div class="journey-controls" role="group" aria-label="Explore the founder journey">
+<button type="button" data-journey="0" aria-pressed="true"><span class="number">01</span><strong>Describe</strong></button><button type="button" data-journey="1" aria-pressed="false"><span class="number">02</span><strong>Check</strong></button><button type="button" data-journey="2" aria-pressed="false"><span class="number">03</span><strong>Act</strong></button>
+</div><div class="journey-main"><div><div class="eyebrow" id="journey-kicker"></div><h3 class="journey-title" id="journey-title"></h3><p class="journey-desc" id="journey-description"></p><div class="tagrow" id="journey-tags"></div></div><div><div class="app-screen" id="journey-screen" aria-live="polite"></div><p class="fig-note">Screens redrawn from the live app for this case study.</p></div></div></div>
+<div class="dir"><div class="eyebrow">Second entry point / Directory</div><p class="small muted" style="margin-top:8px">The matches come from a graph that founders can also browse directly: 931 organisations, searchable by name, description or focus, filterable by region, each savable to the Shortlist. Every results group links back to it (“See every lab space in the directory”).</p><div class="tagrow"><span class="tag">Lab space 61</span><span class="tag">Investor 168</span><span class="tag">Pharma 508</span><span class="tag">Service provider 150</span><span class="tag">Accelerator 5</span><span class="tag">Research institute 24</span><span class="tag">Funding programme 15</span></div></div>
+
+<h3 class="h2" style="font-size:clamp(24px,2.6vw,34px);margin-top:72px">Designed for an AI <span class="blue">that can be wrong.</span></h3>
+<p class="lead">The model interprets free text and ranks organisations, and both can go wrong. Each pattern below gives the founder a way to see the model’s reasoning or correct it.</p>
+<div class="three ai-grid">
+<article class="card"><span class="ordinal">INTERPRETATION</span><h3 class="h3">What you wrote, beside what we understood</h3><p>The founder’s sentence sits next to an editable profile. Any field can be fixed, and needs added or removed, before ranking.</p></article>
+<article class="card"><span class="ordinal">TRANSPARENCY</span><h3 class="h3">How matching works, in three lines</h3><p>Each need maps to organisations that offer it; field and stage raise the score; every match shows its reason and source.</p></article>
+<article class="card"><span class="ordinal">PROVENANCE</span><h3 class="h3">Score, reason, source, date</h3><p>Every card names its source with a verified date. “Why this match” opens the retrieved snippets and an audit reference.</p></article>
+<article class="card"><span class="ordinal">STEERING</span><h3 class="h3">Refine in plain words</h3><p>“Only investors who lead rounds”, “We need BSL-3”, plus type, region and minimum-match filters.</p></article>
+<article class="card"><span class="ordinal">HUMAN IN THE LOOP</span><h3 class="h3">Nothing is sent without approval</h3><p>Intro drafts are editable, and “Open in mail client” stays locked until the founder confirms they’ve read it.</p></article>
+<article class="card"><span class="ordinal">GROUND TRUTH</span><h3 class="h3">A directory behind every answer</h3><p>All 931 organisations stay browsable, so founders can check what the AI left out.</p></article>
+</div>
+</div></section>
+
+<section class="page-section" id="system"><div class="wrap">
+<div class="system-intro"><div class="section-head"><div class="eyebrow">Step 02 / Unify the system</div><h2 class="h2">One language. <span class="blue">Every interface.</span></h2><p class="lead">After the hackathon, each designer and developer was working from their own variations. I consolidated them into one component catalog — raw values, semantic roles, components — that now acts as the single source of truth for the app and the landing page.</p>
+<p class="pull">The October hackathon frontend had <span class="blue">111 hard-coded hex values</span>, its own orange focus colour and two typefaces. The catalog replaces all of that with named roles.</p></div><div class="toggle-wrap"><span class="eyebrow">Preview</span><button class="mode-btn" id="mode-light" type="button" aria-pressed="true">Light</button><button class="mode-btn" id="mode-dark" type="button" aria-pressed="false">Dark</button></div></div>
+
+<div class="token-layer"><div class="eyebrow">How tokens flow</div><h3 class="h3" style="margin:9px 0 0">Choose colour by meaning, not by hex.</h3><div class="mapping"><div><code>Primitive</code><p>Raw values only, e.g. <code>--primitive-color-2446f5</code>. Never used in components.</p></div><div class="arrow">→</div><div><code>Semantic → component</code><p><code>--primary</code> resolves to Rhine Blue in light mode and Thread Lime in dark.</p></div></div></div>
+
+<div class="color-grid" aria-label="Semantic colour roles"><div class="swatch"><div class="swatch-color" style="background:var(--primary);color:var(--primary-foreground)">Aa</div><div class="swatch-name"><b>primary</b><span>Action</span></div></div><div class="swatch"><div class="swatch-color" style="background:var(--background);color:var(--foreground)">Aa</div><div class="swatch-name"><b>background</b><span>Canvas</span></div></div><div class="swatch"><div class="swatch-color" style="background:var(--card);color:var(--card-foreground)">Aa</div><div class="swatch-name"><b>card</b><span>Surface</span></div></div><div class="swatch"><div class="swatch-color" style="background:var(--secondary);color:var(--secondary-foreground)">Aa</div><div class="swatch-name"><b>secondary</b><span>Support</span></div></div><div class="swatch"><div class="swatch-color" style="background:var(--match);color:var(--match-foreground)">Aa</div><div class="swatch-name"><b>match</b><span>Match state</span></div></div><div class="swatch"><div class="swatch-color" style="background:var(--destructive);color:var(--destructive-foreground)">Aa</div><div class="swatch-name"><b>destructive</b><span>Risky action</span></div></div></div>
+
+<div class="foundation-cols"><div class="subpanel"><div class="eyebrow">Typography</div><div class="type-sample"><span class="sample-tag">Display</span><span class="sample-display">Find your next step.</span></div><div class="type-sample"><span class="sample-tag">Headline</span><span class="sample-head">Built around your needs.</span></div><div class="type-sample"><span class="sample-tag">Body</span><span class="sample-body muted">A connection that matters, with a reason and a source.</span></div><p class="fine muted" style="margin-top:15px">Neue Frutiger for reading; JetBrains Mono for labels and data.</p></div>
+<div class="subpanel"><div class="eyebrow">Actions</div><h3 style="margin-top:12px">Ranked by priority, not decoration</h3><p class="small muted">One primary action per view; everything else steps down.</p><div class="button-strip"><span class="btn btn-primary">Primary</span><span class="btn btn-secondary">Secondary</span><span class="btn btn-outline">Outline</span><span class="btn btn-ghost">Ghost</span><span class="btn btn-destructive">Destructive</span><span class="btn btn-link">Link</span><button class="btn" disabled>Unavailable</button></div></div></div>
+
+<div class="foundation-cols"><div class="subpanel"><div class="eyebrow">Key composition / Match card</div><h3 style="margin-top:12px">Reason and source, always together</h3><div class="app-match" style="margin-top:17px"><span class="app-soft">Match</span><div class="app-match-title" style="margin-top:9px">Lab space for an early-stage medtech team</div><p class="app-match-why">Why: the request mentions a Basel prototype and a need for lab access.</p><div class="app-match-why">Source · checked date</div><a href="#evals">How we test this ↓</a></div></div><div class="subpanel"><div class="eyebrow">Feedback states</div><h3 style="margin-top:12px">Colour never speaks alone</h3><div class="feedbacks"><div class="status success"><b>Success</b>Profile updated.</div><div class="status warning"><b>Warning</b>Review uncertain details.</div><div class="status info"><b>Information</b>Source available.</div><div class="status error"><b>Error</b>Unable to verify the link.</div></div></div></div>
+</div></section>
+
+<section class="page-section" id="checks"><div class="wrap section-grid"><div class="section-rail eyebrow">Step 03 / Check the build</div><div class="section-copy">
+<h2 class="h2">Rules that people <span class="blue">and AI tools can follow.</span></h2>
+<p class="lead">Much of the frontend is written with AI assistance. A system only holds if those tools get the same constraints as the team, so the catalog is also written down as instructions.</p>
+<div class="process-list">
+<div class="process-row"><div class="proc-n">01</div><div><h3>Codify</h3><p>Component and page conventions live in an instruction file (<code>CLAUDE.md</code>) that points each task to the right token and component spec — so nothing invents a new colour or radius.</p></div></div>
+<div class="process-row"><div class="proc-n">02</div><div><h3>Lint <span class="tag" style="vertical-align:middle;margin-left:6px">Proposed</span></h3><p>Automated checks should flag hard-coded colours and unknown tokens before review.</p></div></div>
+<div class="process-row"><div class="proc-n">03</div><div><h3>Review</h3><p>A person checks what linting can’t: hierarchy, both themes and keyboard focus, against the table below.</p></div></div>
+</div>
+<div class="check-panel"><div class="check-header"><h3>Acceptance checks</h3><span>One observable property per row</span></div><div class="table-scroll"><table class="review-table"><thead><tr><th>Area</th><th>Pass when</th><th>Evidence</th></tr></thead><tbody>
+<tr><td>Semantic colour</td><td>Actions, text, surfaces, links and match states use catalog roles only.</td><td>Token audit</td></tr>
+<tr><td>Themes</td><td>Hierarchy, readable text and visible focus hold in light and dark.</td><td>Side-by-side renders, contrast</td></tr>
+<tr><td>Buttons &amp; forms</td><td>Approved variants; visible labels; clear disabled and error states.</td><td>State walkthrough</td></tr>
+<tr><td>Recommendations</td><td>Every card shows a reason, a source and a next action.</td><td>Results review</td></tr>
+<tr><td>Access</td><td>Status messages are written out; the Graph view has a list alternative; icon links aren’t announced twice.</td><td>Keyboard &amp; screen reader</td></tr>
+</tbody></table></div></div>
+<p class="fine muted" style="margin-top:16px"><b style="color:var(--foreground)">Next:</b> export the semantic tokens as JSON with a “use for” line each, so AI tools pick a role by meaning — then compare output with and without the catalog.</p>
+</div></div></section>
+
+<section class="page-section" id="evals"><div class="wrap">
+<div class="section-head"><div class="eyebrow">Step 04 / Evaluate the advice</div><h2 class="h2">A consistent interface is not enough. <span class="blue">Can founders trust the route?</span></h2><p class="lead">UI checks test the build. Product evals test the advice: given a real request, is it understood correctly, is each match justified, and is the next step sensible?</p></div>
+<div class="scenarios"><div class="scenario-choose" role="group" aria-label="Choose a founder scenario"><button type="button" data-scenario="0" aria-pressed="true">Medtech · Basel</button><button type="button" data-scenario="1" aria-pressed="false">Biotech · Series A</button><button type="button" data-scenario="2" aria-pressed="false">Diagnostics · Relocation</button><button type="button" data-scenario="3" aria-pressed="false">Researcher · Spin-off</button></div><div class="scenario-body"><div><div class="eyebrow" id="scenario-language"></div><h3 id="scenario-heading" style="margin-top:12px"></h3><p class="quote" id="scenario-quote"></p></div><div><div class="eyebrow">Pass criteria</div><ul class="checklist" id="scenario-checks"></ul><div class="criterion"><b style="font-weight:600">Automatic fail</b><p id="scenario-gate" style="margin-top:5px"></p></div></div></div></div>
+<div class="check-panel"><div class="check-header"><h3>Scoring rubric</h3><span>0 missing · 1 partial · 2 supported</span></div><div class="table-scroll"><table class="review-table"><thead><tr><th>Dimension</th><th>Question</th><th>How to verify</th></tr></thead><tbody><tr><td>Profile fidelity</td><td>Are team, stage, field, location and needs preserved?</td><td>Compare profile to input</td></tr><tr><td>Relevance &amp; coverage</td><td>Does each match fit the constraints, and are small categories not crowded out by large ones?</td><td>Read reasons; check category mix</td></tr><tr><td>Discrimination</td><td>Do scores and reasons separate strong from weak matches, consistently across runs?</td><td>Compare within a group; rerun five times</td></tr><tr><td>Evidence &amp; fabrication</td><td>Do sources back the claim, and is nothing (organisation, deadline, eligibility) invented?</td><td>Open source; check the directory</td></tr><tr><td>Language parity</td><td>Is quality equal in EN, DE, FR and Baseldütsch, including the drafted intro?</td><td>Same scenario, four languages</td></tr><tr><td>Action &amp; control</td><td>Is the next step clear, and can the founder correct, refine and revisit?</td><td>Run Check, refine, Shortlist</td></tr></tbody></table></div></div>
+
+<h3 class="h2" style="font-size:clamp(24px,2.6vw,34px);margin-top:64px">A first run: <span class="blue">medtech in Basel.</span></h3>
+<p class="lead">One pass of the first scenario through the live beta. Sources, dates and correction held up. Four things didn’t, and each points to a specific fix.</p>
+<div class="check-panel"><div class="check-header"><h3>Found → fix</h3><span>One run · not a benchmark</span></div><div class="table-scroll"><table class="review-table"><thead><tr><th>Finding</th><th>What we saw</th><th>What to change</th></tr></thead><tbody>
+<tr><td>Location dropped</td><td>“in Basel” became “Where to look: All regions”.</td><td>Carry a stated location into the profile; add it to every scenario’s pass criteria.</td></tr>
+<tr><td>Scores don’t rank</td><td>Four labs, all 71, all “Fits seed stage.” The reason mentions only stage, so the medtech field likely added nothing to the score.</td><td>Map medtech to medical devices; build reasons from every matched attribute; explain the score in “Why this match”.</td></tr>
+<tr><td>Availability unclear</td><td>One lab is “planned”, shown with the same weight as open ones.</td><td>Show availability beside the score; rank planned space lower when the need is immediate.</td></tr>
+<tr><td>Intro in one language</td><td>In the October code, intro drafts are always in English.</td><td>Draft in the answer language; check it in the language-parity run.</td></tr>
+</tbody></table></div></div>
+<div class="loop"><div><strong>01 / DEFINE</strong>Pick a founder scenario and its pass criteria.</div><div><strong>02 / RUN</strong>Go through Describe → Check → Act.</div><div><strong>03 / REVIEW</strong>Log missing facts, unsupported claims and confusing steps.</div><div><strong>04 / IMPROVE</strong>Fix the prompt, mapping, source or screen, then rerun.</div></div>
+<div class="note">Scenarios are the live app’s own example prompts. Next for the loop: a “not relevant” control on each match, so founders feed it too.</div>
+</div></section>
+
+<section class="closing" id="reflection"><div class="wrap"><div class="eyebrow">Reflection</div><h2 class="h2">Two kinds of quality. <span class="blue">One founder journey.</span></h2><p>The catalog makes FadäRhy look and behave the same everywhere. The journey gives that consistency a job. Evals tie them together: the question is not only whether a component follows the rules, but whether the founder using it understands the match and knows what to do next.</p><a href="https://app.fadarhy.ch/" target="_blank" rel="noreferrer" class="btn btn-primary" style="margin-top:26px">Try FadäRhy ↗</a></div></section>
+</main>
+<footer><div class="wrap"><p>FadäRhy · Product design, design system &amp; evals · November 2026</p><a href="#top" class="fine">Back to top ↑</a></div></footer>
+<script>
+(()=>{
+  const $=(id)=>document.getElementById(id);
+  const setTheme=(theme)=>{document.documentElement.setAttribute('data-theme',theme);$('theme-toggle').setAttribute('aria-pressed',String(theme==='dark'));$('theme-toggle').setAttribute('aria-label',theme==='dark'?'Switch to light theme':'Switch to dark theme');$('theme-toggle').textContent=theme==='dark'?'◐   Light':'◐   Dark';$('mode-light').setAttribute('aria-pressed',String(theme==='light'));$('mode-dark').setAttribute('aria-pressed',String(theme==='dark'));};
+  $('theme-toggle').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='light'?'dark':'light'));
+  $('mode-light').addEventListener('click',()=>setTheme('light'));$('mode-dark').addEventListener('click',()=>setTheme('dark'));
+  const top='<div class="app-top"><div class="app-logo">Fadä<span>Rhy</span></div><div class="app-tabs"><span>Directory</span><span>Shortlist</span><span>EN · DE · FR</span></div></div>';
+  const journeys=[
+    {k:'01 / DESCRIBE',title:'Say it in your own words.',desc:'Type or speak a few sentences about the team, stage and needs, in any of four languages. Example prompts help founders who don’t know where to start.',tags:['Text or speech','Answer language','Example prompts'],html:`<div class="app-title">Find your next right connection.</div><div class="app-label">Your situation and needs</div><div class="app-box">We’re a four-person medtech team in Basel with a working prototype. We need access to a lab and our first non-dilutive funding.</div><div style="margin-top:10px" class="fine muted">Answer language · Auto · English · Deutsch · Français</div><span class="app-btn">Find my path →</span><div style="margin-top:14px"><span class="app-pill">Spin-off · FR</span><span class="app-pill">Before Series A</span><span class="app-pill">Moving to Basel · DE</span></div>`},
+    {k:'02 / CHECK',title:'Check what we understood.',desc:'The input becomes an editable profile, with the founder’s own sentence shown beside it. Errors are fixed here, before they reach the ranking.',tags:['What you wrote','Editable fields','Add or remove needs','How matching works'],html:`<div class="fine muted">✓ Describe — <b style="color:var(--foreground)">2 Check profile</b> — 3 Matches and plan</div><div class="app-title">Check what we understood</div><div class="app-box" style="background:var(--banner);color:var(--banner-foreground);border-color:var(--banner)"><div style="color:var(--thread-lime);font-size:11px;font-weight:600">What you wrote</div>“We’re a four-person medtech team in Basel with a working prototype…”</div><div class="app-box" style="margin-top:10px"><span class="app-pill">Team 4</span><span class="app-pill">Seed</span><span class="app-pill">Medical devices</span><span class="app-pill">All regions</span><div class="app-label">What you need</div><span class="app-pill">■ Lab space</span><span class="app-pill">■ Grants</span><span class="app-pill" style="border-style:dashed">+ Investors</span><span class="app-pill" style="border-style:dashed">+ Regulatory</span></div>`},
+    {k:'03 / ACT',title:'Get ranked matches, a plan and an introduction.',desc:'Matches are grouped by need and ranked by fit. Each one shows a score, a reason, a dated source and a “Why this match” section. Founders refine in plain words, save to the Shortlist or draft an intro.',tags:['Score + reason + source','Refine in plain words','Plan · Map · Graph','Draft intro'],html:`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div class="app-title" style="margin:6px 0">8 matches for 2 needs</div><div><span class="app-pill" style="border-color:var(--primary)">Matches</span><span class="app-pill">Plan</span><span class="app-pill">Map</span><span class="app-pill">Graph</span></div></div><div class="app-box app-fill" style="padding:9px 12px">✦ Refine in plain words, e.g. only investors who lead rounds</div><div class="app-match"><div style="display:flex;justify-content:space-between;gap:10px"><div><span class="app-soft">Lab space · Basel-Stadt</span><div class="app-match-title" style="margin-top:8px">Tech Park Basel</div><div class="app-match-why">Fits seed stage.</div><div class="app-match-why">Source: Basel Super Cluster · verified Oct 2026</div><div class="app-match-why" style="color:var(--foreground)">▸ Why this match</div></div><span class="score">71</span></div><div style="margin-top:8px"><span class="app-pill">Save</span><span class="app-pill">Draft intro</span><span class="app-pill">Details</span></div></div>`}
+  ];
+  function journey(i){const j=journeys[i];$('journey-kicker').textContent=j.k;$('journey-title').textContent=j.title;$('journey-description').textContent=j.desc;$('journey-tags').replaceChildren(...j.tags.map(t=>{const n=document.createElement('span');n.className='tag';n.textContent=t;return n}));$('journey-screen').innerHTML=top+j.html;document.querySelectorAll('[data-journey]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.journey===i)));}
+  document.querySelectorAll('[data-journey]').forEach(b=>b.addEventListener('click',()=>journey(+b.dataset.journey)));journey(0);
+  const scenarios=[
+    {language:'ENGLISH',heading:'Lab space and funding',quote:'“We’re a four-person medtech team in Basel with a working prototype. We need access to a lab and our first non-dilutive funding.”',checks:['Keeps team size, prototype stage, medtech and Basel.','Treats lab space and non-dilutive funding as two needs.','Gives a sourced reason for every match.','States lab constraints and grant eligibility plainly.'],gate:'Invents eligibility, availability or a deadline.'},
+    {language:'ENGLISH',heading:'Biotech before Series A',quote:'“We are a six-person oncology startup preparing for Series A. We need BSL-2 laboratory space, regulatory expertise, potential investors and pharma partners.”',checks:['Treats this as Series A prep, not seed.','Keeps BSL-2 — no generic lab space instead.','Separates investors, regulatory, labs and pharma.','Backs funding-stage fit with evidence.'],gate:'Recommends a lab without verifiable BSL-2, or misstates the funding stage.'},
+    {language:'DEUTSCH',heading:'Diagnostics team moving to Basel',quote:'“Wir sind ein Diagnostik-Startup mit acht Personen aus Deutschland in der Seed-Phase und ziehen nach Basel. Wir brauchen Laborfläche, regulatorische Beratung und Investoren.”',checks:['Keeps the move from Germany, eight people and seed stage.','Splits lab, regulatory and investor needs.','Answers in German.','Says which resources apply to cross-border teams, with sources.'],gate:'Assumes Swiss eligibility or residency without evidence.'},
+    {language:'FRANÇAIS',heading:'Researcher considering a spin-off',quote:'“Je suis chercheuse en oncologie à l’Université de Bâle, je veux créer une startup. Qu’est-ce que je dois faire ?”',checks:['Reads this as spin-off exploration, not a funded company.','Separates tech-transfer support from investors.','Gives an ordered sequence of steps in French.','Flags uncertainty and links current guidance.'],gate:'Assumes IP ownership, funding readiness or an incorporated company.'}
+  ];
+  function scenario(i){const s=scenarios[i];$('scenario-language').textContent=s.language+' / FOUNDER REQUEST';$('scenario-heading').textContent=s.heading;$('scenario-quote').textContent=s.quote;$('scenario-gate').textContent=s.gate;$('scenario-checks').replaceChildren(...s.checks.map(t=>{let li=document.createElement('li');li.textContent=t;return li}));document.querySelectorAll('[data-scenario]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.scenario===i)));}
+  document.querySelectorAll('[data-scenario]').forEach(b=>b.addEventListener('click',()=>scenario(+b.dataset.scenario)));scenario(0);
+})();
+</script>
+</body></html>

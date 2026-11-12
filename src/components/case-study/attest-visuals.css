@@ -1,0 +1,11 @@
+/* Keep prototype screens independent of the case-study editorial heading rules. */
+.attest-prototype [data-step-heading] {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.attest-prototype button {
+  max-width: 100%;
+}

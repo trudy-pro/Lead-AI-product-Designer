@@ -403,15 +403,16 @@ img[src="/images/jia/jia-logo.svg"] {
   line-height: 1.4;
   letter-spacing: 0;
 }
-.project-editorial-header dl:not(.jia-project-details) {
+.project-editorial-header dl:not(.project-details) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
   max-width: 580px;
   margin-top: 32px;
 }
-.project-editorial-header dl:not(.jia-project-details) > div { margin: 0; }
+.project-editorial-header dl:not(.project-details) > div { margin: 0; }
 .project-overlay-scroll section { padding-top: 80px; }
+.project-overlay-scroll section[data-continuation] { padding-top: 24px; }
 .project-overlay-scroll section h2 { font-size: 36px; letter-spacing: 0; }
 .jia-full-page section h2,
 .project-overlay-scroll:has(.jia-cover-video) section h2 {
@@ -426,7 +427,7 @@ img[src="/images/jia/jia-logo.svg"] {
 }
 @media (max-width: 639px) {
   .project-overlay-scroll { padding: clamp(1.25rem, 3vw, 3rem); }
-  .project-editorial-header dl:not(.jia-project-details) { grid-template-columns: minmax(0, 1fr); }
+  .project-editorial-header dl:not(.project-details) { grid-template-columns: minmax(0, 1fr); }
 }
 
 .jia-rewards-preview figure > div {
@@ -485,7 +486,9 @@ img[src="/images/jia/jia-logo.svg"] {
 }
 
 .jia-cover-video figure > div,
-.project-editorial-header > .jia-cover-video figure > div {
+.project-editorial-header > .jia-cover-video figure > div,
+.case-cover-video figure > div,
+.project-editorial-header > .case-cover-video figure > div {
   padding: 0;
   border: 0;
   background: transparent;
@@ -542,4 +545,32 @@ html:has(.jia-full-page) {
 @media (prefers-reduced-motion: reduce) {
   .project-overlay[data-state],
   .project-overlay[data-state] .project-overlay-panel { animation: none; }
+}
+
+/*
+ * FadäRhy catalog colours, scoped to the FadäRhy case-study visuals
+ * (src/components/case-study/fadarhy-visuals.tsx). Values mirror the `palette` there.
+ */
+.fr-theme {
+  --fr-primary: #2446f5; --fr-primary-fg: #ffffff; --fr-bg: #f2f2f2; --fr-card: #ffffff;
+  --fr-secondary: #f4f6fb; --fr-border: #e4e4ea; --fr-fg: #2a2a2a; --fr-muted: #5c5c66;
+  --fr-link: #2446f5; --fr-match: #edfbf3; --fr-match-fg: #2f7a56; --fr-destructive: #b42318;
+  --fr-destructive-fg: #ffffff; --fr-banner: #2a2a2a; --fr-banner-fg: #eef0e8; --fr-lime: #d6ff3f;
+  --fr-success: #1a7f4b; --fr-success-soft: #e6f4ec; --fr-warning: #8a5a00; --fr-warning-soft: #fff3d6;
+  --fr-info: #0b5ed7; --fr-info-soft: #e3eeff; --fr-error: #b42318; --fr-error-soft: #fdecea;
+  --fr-disabled: #e4e4ea; --fr-disabled-fg: #5c5c66;
+}
+.dark .fr-theme {
+  --fr-primary: #d6ff3f; --fr-primary-fg: #2a2a2a; --fr-bg: #11120f; --fr-card: #1c1d19;
+  --fr-secondary: #11120f; --fr-border: #2e3029; --fr-fg: #eef0e8; --fr-muted: #a8ad9f;
+  --fr-link: #d6ff3f; --fr-match: #11301f; --fr-match-fg: #6fd39a; --fr-destructive: #ff8a80;
+  --fr-destructive-fg: #2a2a2a; --fr-banner: #1c1d19; --fr-banner-fg: #eef0e8; --fr-lime: #d6ff3f;
+  --fr-success: #6fd39a; --fr-success-soft: #11301f; --fr-warning: #f2c14e; --fr-warning-soft: #33280a;
+  --fr-info: #8fb0ff; --fr-info-soft: #112a66; --fr-error: #ff8a80; --fr-error-soft: #3a1613;
+  --fr-disabled: #2e3029; --fr-disabled-fg: #7b8073;
+}
+
+
+.home-current-role a {
+  font-weight: 400;
 }

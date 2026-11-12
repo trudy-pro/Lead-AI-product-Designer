@@ -1,5 +1,5 @@
 import {
-  CaseStudyImage, CaseStudyVideo, EditorialContentSection, NextProjectNavigation, Prose, Reveal, type CaseSection,
+  CaseStudyImage, CaseStudyVideo, EditorialContentSection, NextProjectNavigation, Prose, ProjectDetail, Reveal, type CaseSection,
 } from "@/components/case-study/case-study";
 
 export const jiaSections: CaseSection[] = [
@@ -8,19 +8,6 @@ export const jiaSections: CaseSection[] = [
   { id: "onboarding", label: "Business onboarding" },
   { id: "reflection", label: "Reflection" },
 ];
-
-function ProjectDetail({ label, values, className = "" }: { label: string; values: string[]; className?: string }) {
-  return (
-    <div className={className}>
-      <dt className="text-[13px] font-normal leading-5 text-muted-foreground">{label}</dt>
-      <dd className="mt-3 flex flex-wrap gap-2">
-        {values.map((value) => (
-          <span key={value} className="rounded-lg bg-foreground/[0.055] px-2.5 py-1 text-[13px] font-normal leading-[21px] text-foreground/75">{value}</span>
-        ))}
-      </dd>
-    </div>
-  );
-}
 
 /** The full Jia editorial case study body, shared by the /work/jia page and the home-page project overlay. */
 export function JiaCaseStudyContent({ showNextNav = true, overlay = false }: { showNextNav?: boolean; overlay?: boolean }) {
@@ -34,7 +21,7 @@ export function JiaCaseStudyContent({ showNextNav = true, overlay = false }: { s
           </div>
         </div>
         <Reveal className="mt-10">
-          <dl className="jia-project-details grid grid-cols-2 gap-x-8 gap-y-6 border-t border-border pb-4 pt-10 sm:grid-cols-[135px_75px_minmax(0,1fr)] sm:gap-x-12">
+          <dl className="project-details grid grid-cols-2 gap-x-8 gap-y-6 border-t border-border pb-4 pt-10 sm:grid-cols-[135px_75px_minmax(0,1fr)] sm:gap-x-12">
             <ProjectDetail label="Role" values={["UX designer"]} />
             <ProjectDetail label="Year" values={["2023"]} />
             <ProjectDetail label="Project type" values={["Mobile loan app", "UX case study", "Fintech", "UX Research", "Product Design"]} className="col-span-2 sm:col-span-1" />

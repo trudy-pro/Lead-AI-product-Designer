@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Case study: the FadäRhy design system, built so designers, developers and AI coding assistants work from one source of truth.">
+<title>FadäRhy Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: one 1120px column; a white hero band like the FadäRhy landing page, then sections with a narrow label rail beside wide content. Page wears the tokens from src/theme.css. */
+:root {
+  --bg: #F2F2F2; --surface: #FFFFFF; --section: #F4F6FB; --line: #E4E4EA; --line-strong: #6B6B76;
+  --ink: #2A2A2A; --muted: #5C5C66; --link: #2446F5; --blue-soft: #DCE4FE;
+  --blue: #2446F5; --on-blue: #FFFFFF; --accent: #2446F5; --on-accent: #FFFFFF;
+  --lime: #D6FF3F; --night: #2A2A2A; --mist: #EEF0E8;
+  --focus: #2446F5; --code-bg: #2A2A2A; --code-ink: #EEF0E8; --code-muted: #A8AD9F;
+  --font-sans: "Neue Frutiger", "Frutiger", "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11120F; --surface: #1C1D19; --section: #11120F; --line: #2E3029; --line-strong: #7B8073;
+    --ink: #EEF0E8; --muted: #A8AD9F; --link: #D6FF3F; --blue-soft: #2A3308;
+    --accent: #D6FF3F; --on-accent: #2A2A2A; --focus: #D6FF3F; --code-bg: #1C1D19; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11120F; --surface: #1C1D19; --section: #11120F; --line: #2E3029; --line-strong: #7B8073;
+  --ink: #EEF0E8; --muted: #A8AD9F; --link: #D6FF3F; --blue-soft: #2A3308;
+  --accent: #D6FF3F; --on-accent: #2A2A2A; --focus: #D6FF3F; --code-bg: #1C1D19; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 17px/1.65 var(--font-sans); letter-spacing: -0.2px; -webkit-font-smoothing: antialiased; }
+a { color: var(--link); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.mono { font-family: var(--font-mono); }
+.label { font: 500 11.5px/16px var(--font-sans); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+
+/* top bar */
+.top { border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 14px; font-size: 14px; }
+.top a { color: var(--ink); text-decoration: none; font-weight: 600; }
+.top a:hover { text-decoration: underline; }
+
+/* hero */
+.hero { background: var(--surface); color: var(--ink); border-bottom: 1px solid var(--line); }
+.hero .hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-block: 64px 56px; }
+.hero .label { color: var(--muted); }
+.hero h1 { font-size: clamp(40px, 6vw, 64px); line-height: 1.05; font-weight: 700; letter-spacing: -.03em; margin-top: 18px; }
+.hero h1 .dot { color: var(--accent); }
+.hero .lede { font-size: 20px; line-height: 1.5; letter-spacing: -0.5px; margin-top: 22px; max-width: 34em; color: var(--muted); }
+.hero .wave { stroke: var(--accent); }
+.hero .coord { fill: var(--muted); }
+.hero svg { width: 100%; height: auto; display: block; }
+.meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; padding-block: 32px; margin: 0; }
+.meta dt { font: 700 12px/16px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.meta dd { margin: 6px 0 0; font-size: 15px; line-height: 1.5; }
+
+/* sections */
+section.block { padding-block: 72px; border-bottom: 1px solid var(--line); }
+.block .wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
+.rail { padding-top: 6px; }
+.content { display: grid; gap: 28px; min-width: 0; }
+.content > * { min-width: 0; }
+.problems { list-style: none; margin: 0; padding: 0; counter-reset: pr; display: grid; gap: 0; }
+.problems > li { counter-increment: pr; display: grid; grid-template-columns: 48px minmax(0, 1fr); column-gap: 16px; row-gap: 8px; padding-block: 22px; border-top: 1px solid var(--line); }
+.problems > li:last-child { border-bottom: 1px solid var(--line); }
+.problems > li::before { content: counter(pr, decimal-leading-zero); grid-row: 1 / span 3; font: 700 13px/28px var(--font-mono); letter-spacing: .08em; color: var(--muted); }
+.problems h3 { font-size: 20px; line-height: 28px; font-weight: 700; }
+.problems p, .problems ul { max-width: 64ch; }
+.problems ul { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 6px; }
+
+/* solution section */
+.sol-head { display: grid; gap: 8px; }
+.sol-head h3 { font-size: 24px; line-height: 1.3; font-weight: 800; letter-spacing: -.01em; }
+.sol-list { margin: 0; padding-left: 20px; display: grid; gap: 8px; max-width: 66ch; }
+.sol-list strong { font-weight: 700; }
+.sol-item { display: grid; gap: 6px; padding-top: 20px; border-top: 1px solid var(--line); margin-top: 8px; }
+.sol-item h4 { margin: 0; font-size: 20px; line-height: 28px; font-weight: 700; }
+.sol-item p { max-width: 66ch; }
+
+.sol-next { margin-top: 32px; padding-top: 32px; border-top: 2px solid var(--ink); }
+.flow { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; }
+.flow > .fstep, .flow > .fbranch { flex: 1 1 0; }
+.fstep { display: grid; gap: 2px; border: 1px solid var(--line-strong); border-radius: var(--r-md); padding: 10px 14px; background: var(--surface); min-width: 0; }
+.fstep b { font: 700 13px/18px var(--font-mono); }
+.fstep span { font-size: 13px; line-height: 18px; color: var(--muted); }
+.fstep.start { background: var(--blue-soft); border-color: var(--link); }
+.farrow { color: var(--muted); font-size: 20px; }
+.fbranch { display: grid; gap: 8px; }
+.term { background: var(--code-bg); color: var(--code-ink); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; min-width: 0; }
+.term .win-bar { border-bottom-color: #2e3029; color: #a8ad9f; }
+.term .win-bar i { border-color: #7b8073; }
+.term-body { padding: 18px 20px; font: 400 13px/1.8 var(--font-mono); overflow-x: auto; white-space: pre; }
+.t-mu { color: #a8ad9f; } .t-er { color: #ff9a90; font-weight: 700; } .t-ok { color: #9ad783; font-weight: 700; } .t-wa { color: #f2c45c; font-weight: 700; } .t-ln { color: #8fb0ff; } .t-pr { color: #d6ff3f; }
+.checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.check { border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px 14px; background: var(--surface); display: grid; gap: 4px; min-width: 0; }
+.check b { font-size: 14px; }
+.check span { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* problem section */
+.pb { padding-block: 40px 56px; border-bottom: 1px solid var(--line); }
+.pb-top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.pb-grid { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 56px; padding-block: 96px 48px; align-items: start; }
+.pb-intro { display: grid; gap: 32px; min-width: 0; }
+.pb-intro h2 { font-size: clamp(56px, 8vw, 96px); line-height: .95; font-weight: 800; letter-spacing: -.045em; }
+.pb-lede { font-size: clamp(20px, 2vw, 26px); line-height: 1.5; letter-spacing: -.02em; max-width: 19em; }
+.pb-list { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--accent); min-width: 0; position: relative; }
+.pb-list::before { content: ""; position: absolute; left: 15px; top: 52px; bottom: 52px; width: 2px; background: var(--accent); opacity: .35; }
+.pb-list li { position: relative; }
+.pb-list li { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 24px; padding-block: 36px; border-bottom: 1px solid var(--line); }
+.pb-n { width: 32px; height: 32px; margin-top: 4px; border-radius: 999px; background: var(--lime); box-shadow: 0 0 0 2px var(--night); color: var(--night); display: grid; place-items: center; font: 700 13px/1 var(--font-mono); }
+.pb-dot { color: var(--accent); }
+.pb-list code { font-family: var(--font-mono); font-size: .86em; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+.pb-list h3 { font-size: clamp(24px, 2.6vw, 34px); line-height: 1.2; font-weight: 700; letter-spacing: -.03em; }
+.pb-list p { margin-top: 14px; font-size: 18px; line-height: 1.7; color: var(--muted); max-width: 32em; }
+.pb-opp { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 56px; padding-top: 32px; border-top: 1px solid var(--line); align-items: start; }
+.pb-statement { font-size: clamp(26px, 3vw, 38px); line-height: 1.25; letter-spacing: -.03em; font-weight: 400; max-width: 22em; }
+.pb-next { display: grid; place-items: center; width: 56px; height: 56px; margin: 28px auto 0; border-radius: 999px; background: var(--accent); color: var(--on-accent); transition: transform .2s ease, filter .2s ease; }
+.pb-next:hover { filter: brightness(.92); }
+.pb-next:hover { transform: translateY(2px); }
+@media (max-width: 860px) {
+  .pb-grid, .pb-opp { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .pb-grid { padding-block: 56px 64px; }
+  .pb-list li { grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding-block: 28px; }
+  .pb-opp { gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .pb-next { transition: none; } }
+
+@media (max-width: 860px) { .checks { grid-template-columns: minmax(0, 1fr); } .flow { flex-direction: column; align-items: stretch; } .farrow { transform: rotate(90deg); align-self: flex-start; padding-left: 12px; } }
+
+.how { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 32px; align-items: start; }
+.loop { width: 100%; max-width: 420px; height: auto; display: block; }
+.loop-ring { fill: none; stroke: var(--accent); stroke-width: 6; }
+.loop-arrow { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.loop-node { fill: var(--lime); stroke: var(--night); stroke-width: 3; }
+.loop-num { font: 700 14px var(--font-mono); fill: var(--night); }
+.loop-l1 { font: 700 14px var(--font-sans); fill: var(--ink); }
+.loop-l2 { font: 400 12px var(--font-sans); fill: var(--muted); }
+.loop-c1 { font: 400 13px var(--font-sans); fill: var(--muted); }
+.loopsteps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.loopsteps li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding-block: 16px; border-top: 1px solid var(--line); }
+.loopsteps li:last-child { border-bottom: 1px solid var(--line); }
+.loopsteps .n { width: 30px; height: 30px; border-radius: 99px; background: var(--lime); box-shadow: 0 0 0 2px var(--night); color: var(--night); display: grid; place-items: center; font: 700 13px/1 var(--font-mono); margin-top: 1px; }
+.loopsteps p { max-width: 60ch; }
+.loopsteps strong { font-weight: 700; }
+.loopback { display: flex; gap: 10px; align-items: center; font-size: 14px; color: var(--muted); padding-top: 12px; }
+.loopback b { color: var(--ink); font-family: var(--font-mono); }
+@media (max-width: 860px) { .how { grid-template-columns: minmax(0, 1fr); } .loop { max-width: 340px; } }
+
+.proc-step { display: grid; gap: 14px; }
+.proc-next { margin-top: 24px; padding-top: 32px; border-top: 1px solid var(--line); }
+.proc-step h3 { font-size: 24px; line-height: 1.3; font-weight: 800; letter-spacing: -.01em; }
+.proc-step p, .proc-step ol, .proc-step ul { max-width: 66ch; margin: 0; }
+.proc-step ol, .proc-step ul { padding-left: 22px; display: grid; gap: 6px; }
+.proc-step code, .ways code { font-family: var(--font-mono); font-size: .88em; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+.ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.way { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; min-width: 0; }
+.way-h { padding: 12px 14px; border-bottom: 1px solid var(--line); display: grid; gap: 2px; }
+.way-h b { font-size: 14px; }
+.way pre { border: 0; border-radius: 0; margin: 0; font-size: 12px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.way-f { padding: 10px 14px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+.css-l1 { color: #d6ff3f; } .css-l2 { color: #8fb0ff; } .css-cm { color: #a8ad9f; } .css-cu { color: #f2c45c; }
+@media (max-width: 860px) { .ways { grid-template-columns: minmax(0, 1fr); } }
+
+.ttwo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.tt { table-layout: fixed; }
+.tp th:nth-child(1) { width: 28%; } .tp th:nth-child(2) { width: 14%; } .tp th:nth-child(3) { width: 20%; } .tp th:nth-child(4) { width: 38%; }
+.ts th:nth-child(1) { width: 28%; } .ts th:nth-child(2) { width: 10%; } .ts th:nth-child(3) { width: 18%; } .ts th:nth-child(4) { width: 12%; } .ts th:nth-child(5) { width: 12%; } .ts th:nth-child(6) { width: 20%; }
+.tp6 th:nth-child(1) { width: 22%; } .tp6 th:nth-child(2), .tp6 th:nth-child(4) { width: 9%; } .tp6 th:nth-child(3), .tp6 th:nth-child(5) { width: 13%; } .tp6 th:nth-child(6) { width: 34%; }
+.tpanel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px; min-width: 0; display: grid; gap: 6px; align-content: start; }
+.th { margin: 0 0 4px; font-size: 16px; font-weight: 800; }
+.tg { font: 700 11px/14px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 12px !important; }
+.tscroll { overflow-x: auto; }
+.tt { width: 100%; border-collapse: collapse; font: 400 12px/1.4 var(--font-mono); min-width: 560px; }
+.tt th { font: 700 10px/14px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 6px 8px; background: var(--bg); }
+.tt td { padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tt tr:last-child td { border-bottom: 0; }
+.tt .tk { color: var(--link); }
+.tt .sw { display: block; width: 32px; height: 14px; border-radius: 3px; border: 1px solid var(--line-strong); }
+.tt .cu { font-size: 10px; color: var(--muted); border: 1px solid var(--line-strong); border-radius: 3px; padding: 0 4px; margin-left: 4px; }
+@media (max-width: 960px) { .ttwo { grid-template-columns: minmax(0, 1fr); } }
+
+.md3a th:nth-child(1) { width: 24%; } .md3a th:nth-child(2) { width: 14%; } .md3a th:nth-child(3) { width: 62%; }
+.md2 th:nth-child(1) { width: 28%; } .md2 th:nth-child(2) { width: 72%; }
+.md4 th:nth-child(1) { width: 16%; } .md4 th:nth-child(2) { width: 16%; } .md4 th:nth-child(3) { width: 32%; } .md4 th:nth-child(4) { width: 36%; }
+.tb-panel { display: grid; gap: 10px; }
+.tb-row { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: center; }
+.tb-label { font: 400 12px/16px var(--font-mono); color: var(--muted); }
+.tb { display: flex; align-items: center; gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 10px 14px; min-width: 0; overflow: hidden; }
+.tb-logo { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: 15px; letter-spacing: -.01em; flex: none; }
+.tb-logo svg { width: 30px; height: 15px; }
+.tb-links { display: flex; gap: 16px; flex: 1; min-width: 0; overflow: hidden; }
+.tb-link { font-size: 14px; color: var(--muted); white-space: nowrap; position: relative; padding-bottom: 4px; }
+.tb-link.on { color: var(--ink); font-weight: 700; }
+.tb-link.on::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 8px; height: 8px; margin-left: -4px; border-radius: 99px; background: var(--lime); box-shadow: 0 0 0 1.5px var(--night); }
+.tb-av { width: 28px; height: 28px; border-radius: 99px; background: var(--accent); color: var(--on-accent); font: 700 11px/28px var(--font-sans); text-align: center; flex: none; }
+.tb-step { font: 400 12px/16px var(--font-mono); color: var(--muted); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tb-x { margin-left: auto; font-size: 14px; color: var(--link); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+@media (max-width: 600px) { .tb-links { display: none; } .tb-row { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+
+.audit { width: 100%; border-collapse: collapse; font: 400 12px/1.6 var(--font-mono); min-width: 720px; }
+.audit th { text-align: left; font-weight: 400; color: #a8ad9f; padding: 4px 12px 4px 0; border-bottom: 1px solid #2e3029; }
+.audit td { padding: 6px 12px 6px 0; vertical-align: top; color: #eef0e8; border-bottom: 1px solid #2e3029; }
+.audit tr:last-child td { border-bottom: 0; }
+.audit .f { color: #8fb0ff; } .audit .v { color: #ff9a90; } .audit .s { color: #9ad783; }
+.fill { background: var(--blue-soft); border: 1px dashed var(--link); border-radius: 4px; padding: 0 6px; font-family: var(--font-mono); font-size: .9em; }
+.asciitree { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 22px 24px; font: 400 13px/1.65 var(--font-mono); overflow-x: auto; white-space: pre; }
+.asciitree .css-cm { color: var(--muted); }
+.fig { margin: 0; display: grid; gap: 12px; min-width: 0; }
+.fig figcaption { font-size: 14px; color: var(--muted); max-width: 66ch; }
+.fig figcaption b { color: var(--ink); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px; min-width: 0; }
+.layers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 20px; }
+.layer { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.prim { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.pchip { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--r-sm); padding: 6px 8px; min-width: 0; }
+.pchip i { width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--line-strong); display: block; }
+.pchip span { font: 400 11px/14px var(--font-mono); overflow-wrap: anywhere; }
+.pchip b { display: block; font: 700 12px/16px var(--font-mono); color: var(--ink); }
+.map { width: 100%; border-collapse: collapse; min-width: 0; font-size: 13px; }
+.map th, .map td { padding: 8px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+.map th { font: 700 11px/14px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.map td { font-family: var(--font-mono); }
+.map tr:last-child td { border-bottom: 0; }
+.map .ar { color: var(--muted); padding-inline: 0; }
+.mini { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--line-strong); vertical-align: -2px; margin-right: 6px; }
+.reject { margin-top: 16px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; border: 1px dashed var(--line-strong); border-radius: var(--r-md); padding: 12px 14px; font-size: 14px; }
+.reject code { font-family: var(--font-mono); font-size: 13px; }
+.reject .x { font: 700 12px/16px var(--font-mono); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--line-strong); white-space: nowrap; }
+.win { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); min-width: 0; }
+.win-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); font: 400 12px/16px var(--font-mono); color: var(--muted); }
+.win-bar i { width: 10px; height: 10px; border-radius: 99px; border: 1px solid var(--line-strong); display: block; }
+.win-body { padding: 18px 20px; font: 400 13px/1.75 var(--font-mono); overflow-x: auto; }
+.win-body .h { font-weight: 700; color: var(--ink); }
+.win-body .m { color: var(--muted); }
+.win-body .t { color: var(--link); }
+.mdtable { border-collapse: collapse; margin: 10px 0 16px; min-width: 520px; width: 100%; table-layout: fixed; }
+.mdtable th:nth-child(1) { width: 28%; } .mdtable th:nth-child(2) { width: 36%; } .mdtable th:nth-child(3) { width: 36%; }
+.mdtable td { overflow-wrap: anywhere; }
+.mdtable th, .mdtable td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; font: 400 12px/1.5 var(--font-mono); }
+.mdtable th { font-weight: 700; }
+.specs { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); gap: 16px; }
+.tree { list-style: none; margin: 0; padding: 0; font: 400 13px/1.9 var(--font-mono); }
+.tree ul { list-style: none; margin: 0; padding-left: 18px; border-left: 1px solid var(--line); margin-left: 6px; }
+.tree .dir { font-weight: 700; }
+.tree .on { background: var(--blue-soft); border-radius: 4px; padding: 1px 6px; font-weight: 700; }
+@media (max-width: 860px) { .layers, .specs { grid-template-columns: minmax(0, 1fr); } }
+
+.versions { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 20px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 24px; }
+.vcol { display: grid; gap: 10px; min-width: 0; }
+.vrow { display: grid; grid-template-columns: 28px auto minmax(0, 1fr); gap: 10px; align-items: center; font-size: 14px; line-height: 1.4; }
+.vrow .mono { font-size: 13px; }
+.vsw { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--line-strong); }
+.vone { padding: 12px; border: 1px solid var(--line-strong); border-radius: var(--r-md); }
+.varrow { font-size: 28px; color: var(--muted); }
+@media (max-width: 860px) { .versions { grid-template-columns: minmax(0, 1fr); } .varrow { transform: rotate(90deg); justify-self: start; } }
+pre { max-width: 100%; }
+.content h2 { font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1; font-weight: 800; letter-spacing: -.02em; }
+.content > p, .prose p { max-width: 66ch; color: var(--ink); }
+.prose { display: grid; gap: 16px; }
+.muted { color: var(--muted); }
+
+/* principles grid */
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.cell { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 24px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.cell h3 { font-size: 20px; line-height: 1.35; font-weight: 700; }
+.cell p { font-size: 15px; line-height: 1.6; }
+
+/* code */
+pre { margin: 0; background: var(--code-bg); color: var(--code-ink); border: 1px solid var(--line); border-radius: var(--r-md); padding: 18px 20px; overflow-x: auto; font: 400 13px/1.7 var(--font-mono); }
+pre .c { color: var(--code-muted); }
+pre .k { color: #8fb0ff; }
+pre .s { color: var(--lime); }
+.codehead { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+
+/* process */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; padding-block: 18px; border-top: 1px solid var(--line); }
+.steps li:last-child { border-bottom: 1px solid var(--line); }
+.steps .n { font: 700 13px/28px var(--font-mono); color: var(--muted); letter-spacing: .08em; }
+.steps h3 { font-size: 18px; line-height: 28px; font-weight: 700; }
+.steps p { color: var(--muted); font-size: 15px; margin-top: 4px; max-width: 64ch; }
+
+/* specimen */
+.spec { border-radius: var(--r-lg); border: 1px solid var(--line); overflow: hidden; background: var(--sb); color: var(--si); transition: background .2s, color .2s; }
+.spec-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--sl); }
+.spec-bar .label { color: var(--sm); }
+.seg { display: inline-flex; border: 1px solid var(--sls); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button { font: 600 14px/20px var(--font-sans); border: 0; background: transparent; color: var(--si); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--sblue); color: var(--sonb); }
+.seg button:focus-visible { outline: 2px solid var(--sfocus); outline-offset: 2px; }
+.spec-body { padding: 24px 20px; display: grid; gap: 28px; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.sw { border: 1px solid var(--sl); border-radius: var(--r-md); overflow: hidden; background: var(--ss); min-width: 0; }
+.sw .chip { height: 64px; border-bottom: 1px solid var(--sl); display: flex; align-items: flex-end; padding: 8px; }
+.sw .info { padding: 10px 12px 12px; display: grid; gap: 2px; }
+.sw .nm { font: 700 13px/18px var(--font-sans); overflow-wrap: anywhere; }
+.sw .hx { font: 400 12px/16px var(--font-mono); color: var(--sm); }
+.ratio { font: 700 11px/14px var(--font-mono); padding: 2px 6px; border-radius: 4px; background: var(--ss); color: var(--si); border: 1px solid var(--sls); }
+.ratio.bad { text-decoration: line-through; }
+.demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.stack { display: grid; gap: 14px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* FadäRhy components (specimen-scoped tokens) */
+.btn { font: 600 15px/22px var(--font-sans); min-height: 44px; padding: 10px 18px; border-radius: var(--r-md); border: 1px solid transparent; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; }
+.btn:focus-visible { outline: 2px solid var(--sfocus); outline-offset: 2px; }
+.btn--primary { background: var(--sblue); color: var(--sonb); }
+.btn--secondary { background: var(--ss); color: var(--si); border-color: var(--sls); }
+.btn--ghost { background: transparent; color: var(--slink); text-decoration: underline; text-underline-offset: 3px; padding-inline: 6px; }
+.btn--lime { background: #D6FF3F; color: #2A2A2A; }
+.btn:hover { filter: brightness(.93); }
+.nightpad { background: #2A2A2A; border-radius: var(--r-md); padding: 10px; display: inline-flex; }
+.card { background: var(--ss); border: 1px solid var(--sl); border-radius: var(--r-lg); padding: 20px; display: grid; gap: 10px; min-width: 0; }
+.card .kind { display: flex; align-items: center; gap: 8px; font: 700 12px/16px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--sm); }
+.card .node { width: 10px; height: 10px; border-radius: 99px; background: #D6FF3F; box-shadow: 0 0 0 2px #2A2A2A; flex: none; }
+.card h4 { margin: 0; font: 700 18px/26px var(--font-sans); }
+.card .why { font-size: 14px; line-height: 20px; background: var(--ssoft); border-radius: var(--r-sm); padding: 8px 12px; }
+.card .src { font: 400 12px/18px var(--font-mono); color: var(--sm); }
+.card .src a { color: var(--slink); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chipb { font: 400 14px/20px var(--font-sans); min-height: 36px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--sls); background: var(--ss); color: var(--si); cursor: pointer; }
+.chipb[aria-pressed="true"] { background: var(--ssoft); border-color: var(--slink); font-weight: 600; }
+.chipb[aria-pressed="true"]::before { content: "\2713  "; color: var(--slink); font-weight: 700; }
+.chipb:focus-visible { outline: 2px solid var(--sfocus); outline-offset: 2px; }
+.status { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; padding: 10px 14px; border-radius: var(--r-md); font-size: 14px; line-height: 20px; }
+.status svg { width: 22px; height: 22px; }
+.status b { display: block; font-size: 15px; }
+.thread svg { width: 100%; height: auto; display: block; }
+
+/* tables */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font: 700 12px/16px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pass, .fail { font: 700 11px/14px var(--font-mono); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--line-strong); }
+.fail { text-decoration: line-through; }
+.dotc { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--line-strong); vertical-align: -1px; margin-right: 6px; }
+
+/* decisions */
+.decisions { display: grid; gap: 0; }
+.dec { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 24px; padding-block: 22px; border-top: 1px solid var(--line); }
+.dec:last-child { border-bottom: 1px solid var(--line); }
+.dec h3 { font-size: 18px; line-height: 1.4; font-weight: 700; }
+.dec p { color: var(--muted); font-size: 15px; }
+
+.copy { font: 600 13px/18px var(--font-sans); border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+footer .wrap { padding-block: 48px 64px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--muted); }
+
+@media (max-width: 860px) {
+  .hero .hero-grid, .block .wrap, .demo, .dec { grid-template-columns: minmax(0, 1fr); }
+  .hero .hero-grid { gap: 28px; padding-block: 44px 32px; }
+  .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid2 { grid-template-columns: minmax(0, 1fr); }
+  .block .wrap { gap: 12px; }
+  section.block { padding-block: 52px; }
+}
+@media (prefers-reduced-motion: reduce) { .spec { transition: none; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a href="/" target="_top">← All work</a>
+    <span class="label">Case study · Design systems</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <dl class="meta">
+      <div><dt>Role</dt><dd>Design system lead: brand translation, tokens, accessibility, components</dd></div>
+      <div><dt>Team</dt><dd>FadäRhy, a five-person team formed after Hack am Rhein</dd></div>
+      <div><dt>Stack</dt><dd>TanStack Start, React, Tailwind CSS v4, shadcn/ui, tokens in src/theme.css</dd></div>
+      <div><dt>Workflow</dt><dd>AI-assisted: I directed Claude as an agentic collaborator and reviewed every output</dd></div>
+    </dl>
+  </div>
+</div>
+
+<main>
+  <section class="pb" aria-labelledby="h-problem">
+    <div class="wrap">
+      <div class="pb-top">
+        <span class="label">FadäRhy · Design system case study</span>
+        <span class="label">01 / The challenge</span>
+      </div>
+      <div class="pb-grid">
+        <div class="pb-intro">
+          <h2 id="h-problem">The problem<span class="pb-dot">.</span></h2>
+          <p class="pb-lede">AI could build FadäRhy’s screens. But it couldn’t reliably follow the design decisions behind them.</p>
+        </div>
+        <ol class="pb-list">
+          <li><span class="pb-n" aria-hidden="true">1</span><div><h3>Missing design context</h3><p>Without written rules for FadäRhy’s tokens and components, the agent guessed: a raw <code>#2446F5</code> here, a Tailwind <code>blue-600</code> there, Thread Lime on light grey where it can’t be read.</p></div></li>
+          <li><span class="pb-n" aria-hidden="true">2</span><div><h3>No memory between sessions</h3><p>A correction like “lime only on dark grounds” was gone by the next session, so the same mistakes kept coming back.</p></div></li>
+          <li><span class="pb-n" aria-hidden="true">3</span><div><h3>No way to verify the output</h3><p>The founder flows worked, but nothing checked that they matched <code>theme.css</code>, the component specs or WCAG contrast.</p></div></li>
+        </ol>
+      </div>
+      <a class="pb-next" href="#h-solve" aria-label="Go to the setup"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+  </section>
+
+
+  <section class="block" aria-labelledby="h-solve">
+    <div class="wrap">
+      <div class="rail"><p class="label">Setup</p></div>
+      <div class="content">
+        <h2 id="h-solve">The setup</h2>
+        <div class="sol-head">
+          <h3>Problem 1: AI doesn’t know the decisions I’ve made</h3>
+        </div>
+
+        <div class="sol-item">
+          <h4>Closed tokens</h4>
+          <p>A fixed set of colour tokens in 2 layers, primitives and semantic. The AI can only use what’s on the list.</p>
+        </div>
+        <figure class="fig">
+          <div class="panel">
+            <div class="layers">
+              <div class="layer">
+                <p class="label">Layer 1 · Design tokens (raw values)</p>
+                <div class="prim"><div class="pchip"><i style="background:#2446F5"></i><span><b>rhine-blue</b>#2446F5</span></div><div class="pchip"><i style="background:#DCE4FE"></i><span><b>rhine-blue-soft</b>#DCE4FE</span></div><div class="pchip"><i style="background:#D6FF3F"></i><span><b>thread-lime</b>#D6FF3F</span></div><div class="pchip"><i style="background:#2A2A2A"></i><span><b>night</b>#2A2A2A</span></div><div class="pchip"><i style="background:#EEF0E8"></i><span><b>mist</b>#EEF0E8</span></div><div class="pchip"><i style="background:#F2F2F2"></i><span><b>background</b>#F2F2F2</span></div><div class="pchip"><i style="background:#FFFFFF"></i><span><b>surface</b>#FFFFFF</span></div><div class="pchip"><i style="background:#F4F6FB"></i><span><b>section</b>#F4F6FB</span></div><div class="pchip"><i style="background:#E4E4EA"></i><span><b>line</b>#E4E4EA</span></div><div class="pchip"><i style="background:#6B6B76"></i><span><b>line-strong</b>#6B6B76</span></div><div class="pchip"><i style="background:#2A2A2A"></i><span><b>ink</b>#2A2A2A</span></div><div class="pchip"><i style="background:#5C5C66"></i><span><b>ink-muted</b>#5C5C66</span></div><div class="pchip"><i style="background:#B42318"></i><span><b>error</b>#B42318</span></div><div class="pchip"><i style="background:#1A7F4B"></i><span><b>success</b>#1A7F4B</span></div><div class="pchip"><i style="background:#8A5A00"></i><span><b>warning</b>#8A5A00</span></div><div class="pchip"><i style="background:#0B5ED7"></i><span><b>info</b>#0B5ED7</span></div></div>
+              </div>
+              <div class="layer">
+                <p class="label">Layer 2 · Semantic (shadcn names)</p>
+                <div style="overflow-x:auto"><table class="map">
+                  <thead><tr><th scope="col">shadcn name</th><th scope="col"><span class="sr" style="position:absolute;left:-9999px">maps to</span></th><th scope="col">Design token</th><th scope="col">Dark value</th></tr></thead>
+                  <tbody><tr><td>foreground</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#2A2A2A"></span>ink</td><td><span class="mini" style="background:#EEF0E8"></span>#EEF0E8</td></tr><tr><td>card</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#FFFFFF"></span>surface</td><td><span class="mini" style="background:#1C1D19"></span>#1C1D19</td></tr><tr><td>primary</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#2446F5"></span>rhine-blue</td><td><span class="mini" style="background:#D6FF3F"></span>#D6FF3F</td></tr><tr><td>primary-foreground</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#FFFFFF"></span>on-rhine-blue</td><td><span class="mini" style="background:#2A2A2A"></span>#2A2A2A</td></tr><tr><td>secondary</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#F4F6FB"></span>section</td><td><span class="mini" style="background:#11120F"></span>#11120F</td></tr><tr><td>muted-foreground</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#5C5C66"></span>ink-muted</td><td><span class="mini" style="background:#A8AD9F"></span>#A8AD9F</td></tr><tr><td>accent</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#F4F6FB"></span>section</td><td><span class="mini" style="background:#11120F"></span>#11120F</td></tr><tr><td>destructive</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#B42318"></span>error</td><td><span class="mini" style="background:#FF8A80"></span>#FF8A80</td></tr><tr><td>border</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#E4E4EA"></span>line</td><td><span class="mini" style="background:#2E3029"></span>#2E3029</td></tr><tr><td>ring</td><td class="ar" aria-hidden="true">→</td><td><span class="mini" style="background:#2446F5"></span>focus-ring</td><td><span class="mini" style="background:#D6FF3F"></span>#D6FF3F</td></tr></tbody>
+                </table></div>
+              </div>
+            </div>
+            <div class="reject"><span class="x">✕ Rejected</span><span>The agent writes <code>color: #2446F5</code>. It is the right blue, but written as a raw value it skips dark mode, where primary turns lime. The audit flags it and points to <code>bg-primary</code> or <code>text-link</code>.</span></div>
+          </div>
+          <figcaption>The design tokens in <code>src/theme.css</code> hold the raw values for each theme. shadcn components read the semantic names, which point at those tokens, so the whole library re-themes from one file. Anything outside the list is rejected.</figcaption>
+        </figure>
+
+        <div class="sol-item">
+          <h4>Global mapping</h4>
+          <p>A markdown file that says when to use each token.</p>
+        </div>
+        <figure class="fig">
+          <div class="win">
+            <div class="win-bar"><i></i><i></i><i></i><span>docs/design-system/tokens/design-tokens.md</span></div>
+            <div class="win-body">
+<span class="h"># Token usage</span><br>
+<span class="m">Read this before choosing any colour. If a case is not listed, ask; do not invent a value.</span><br><br>
+<span class="h">## Text</span>
+<table class="mdtable">
+  <thead><tr><th>Token</th><th>Use when</th><th>Never</th></tr></thead>
+  <tbody>
+    <tr><td class="t">foreground</td><td>Body text, headings, icons</td><td>On primary fills (use primary-foreground)</td></tr>
+    <tr><td class="t">muted</td><td>Metadata, source dates, captions</td><td>Anything the user must read to act</td></tr>
+    <tr><td class="t">primary</td><td>Links, always underlined</td><td>Body text</td></tr>
+  </tbody>
+</table>
+<span class="h">## Brand accents</span>
+<table class="mdtable">
+  <thead><tr><th>Token</th><th>Use when</th><th>Never</th></tr></thead>
+  <tbody>
+    <tr><td class="t">primary</td><td>Primary button, thread line, selected state</td><td>Primitives like rhine-blue directly</td></tr>
+    <tr><td class="t">thread-lime</td><td>Nodes on the thread; the accent in dark mode</td><td>Any light ground (1.0:1), or text in light mode</td></tr>
+  </tbody>
+</table>
+            </div>
+          </div>
+          <figcaption>One markdown file that the agent reads at the start of every task. Each token gets a “use when” and a “never”, so the choice is a lookup, not a guess.</figcaption>
+        </figure>
+
+        <div class="sol-item">
+          <h4>Spec files</h4>
+          <p>Markdown specs with guidelines for each page template, component and design pattern</p>
+        </div>
+        <figure class="fig">
+          <div class="specs">
+            <div class="panel">
+              <p class="label" style="margin-bottom:10px">docs/design-system/</p>
+              <ul class="tree" aria-label="Spec files">
+                <li><span class="dir">templates/</span>
+                  <ul><li>auth-page.md</li><li>flow-page.md</li><li>recommendations-page.md</li></ul></li>
+                <li><span class="dir">components/</span>
+                  <ul><li>button.md</li><li>thread.md</li><li><span class="on">recommendation-card.md</span></li><li>chip.md</li><li>status-message.md</li></ul></li>
+                <li><span class="dir">patterns/</span>
+                  <ul><li>referral-consent.md</li><li>source-and-freshness.md</li></ul></li>
+              </ul>
+            </div>
+            <div class="win">
+              <div class="win-bar"><i></i><i></i><i></i><span>docs/design-system/components/recommendation-card.md</span></div>
+              <div class="win-body">
+<span class="h"># RecommendationCard</span><br>
+<span class="m">One connection: a person, programme, expertise, laboratory or funding route.</span><br><br>
+<span class="h">## Must</span><br>
+- Show <span class="t">source</span> with a link and a “checked” date <span class="m">(principle 01)</span><br>
+- Put “Why this” on <span class="t">accent</span>, one sentence<br>
+- Use one action: a ghost Button with <span class="t">arrow="next"</span><br><br>
+<span class="h">## Never</span><br>
+- Sponsored badges, colours or placement <span class="m">(principle 02)</span><br>
+- Promised outcomes: say “See next step”, not “Get funded”<br><br>
+<span class="h">## Variants</span><br>
+<span class="m">None. If a page needs one, add it to this spec first.</span>
+              </div>
+            </div>
+          </div>
+          <figcaption>Every page template, component and pattern has a markdown spec with “must” and “never” rules. The agent opens the spec before it builds, so the choice of component and variant is decided, not improvised.</figcaption>
+        </figure>
+
+        <div class="sol-head sol-next">
+          <h3>Problem 2: AI starts every session from zero</h3>
+        </div>
+        <div class="sol-item">
+          <h4>Project instructions and routing</h4>
+          <p>Standing instructions the agent reads at the start of every session. They point it to the global mapping and the right spec files, instead of starting cold.</p>
+        </div>
+        <figure class="fig">
+          <div class="win">
+            <div class="win-bar"><i></i><i></i><i></i><span>CLAUDE.md</span></div>
+            <div class="win-body">
+<span class="h"># FadäRhy: project instructions</span><br>
+<span class="m">Read this at the start of every session, before writing any UI code.</span><br><br>
+<span class="h">## Always</span><br>
+- Use only tokens from <span class="t">src/theme.css</span>. No hex values, no new colours.<br>
+- Read <span class="t">docs/design-system/tokens/design-tokens.md</span> before choosing a colour.<br>
+- Run <span class="t">npm run audit:design</span> before you say a task is done.<br><br>
+<span class="h">## Routing</span>
+<table class="mdtable">
+  <thead><tr><th>If the task is…</th><th>Read first</th></tr></thead>
+  <tbody>
+    <tr><td>A component</td><td class="t">docs/design-system/components/&lt;name&gt;.md</td></tr>
+    <tr><td>A page</td><td class="t">docs/design-system/templates/&lt;page&gt;.md</td></tr>
+    <tr><td>A flow (referral, consent)</td><td class="t">docs/design-system/patterns/&lt;pattern&gt;.md</td></tr>
+    <tr><td>Not covered by a spec</td><td>Stop and ask. Do not improvise.</td></tr>
+  </tbody>
+</table>
+<span class="h">## Corrections</span><br>
+<span class="m">When I correct you, add the rule to the right spec file so the next session knows it.</span>
+            </div>
+          </div>
+          <div class="panel">
+            <p class="label" style="margin-bottom:12px">A new session, routed</p>
+            <div class="flow" role="img" aria-label="A new session reads CLAUDE.md, which routes it to design-tokens.md and the chip spec, and then it builds the filter bar.">
+              <div class="fstep start"><b>New session</b><span>“Add a filter bar”</span></div>
+              <span class="farrow" aria-hidden="true">→</span>
+              <div class="fstep"><b>CLAUDE.md</b><span>Standing rules</span></div>
+              <span class="farrow" aria-hidden="true">→</span>
+              <div class="fbranch">
+                <div class="fstep"><b>design-tokens.md</b><span>Which colours</span></div>
+                <div class="fstep"><b>components/chip.md</b><span>Which component, which variant</span></div>
+              </div>
+              <span class="farrow" aria-hidden="true">→</span>
+              <div class="fstep"><b>Build</b><span>From the spec, not from memory</span></div>
+            </div>
+          </div>
+          <figcaption>The instructions file is the only thing every session is guaranteed to read, so it works as a router. Corrections go into the spec files, so a fix made once stays fixed in the next session.</figcaption>
+        </figure>
+
+        <div class="sol-head sol-next">
+          <h3>Problem 3: No way to check if what’s built matches what’s intended</h3>
+        </div>
+        <div class="sol-item">
+          <h4>Audit script</h4>
+          <p>Scans the code after each build and flags anything that breaks the rules.</p>
+        </div>
+        <figure class="fig">
+          <div class="term">
+            <div class="win-bar"><i></i><i></i><i></i><span>Terminal</span></div>
+            <div class="term-body"><span class="t-pr">$</span> npm run audit:design
+
+<span class="t-mu">Scanning src/ against theme.css and docs/design-system/ …</span>
+
+<span class="t-er">✕ token</span>     src/pages/Programmes.tsx:42
+            Hard-coded colour <span class="t-ln">#2446F5</span>. Not a token.
+            <span class="t-mu">→ Use bg-primary for fills, text-link for text.</span>
+
+<span class="t-er">✕ contrast</span>  src/components/Hero.tsx:18
+            <span class="t-ln">text-thread-lime</span> on <span class="t-ln">bg-background</span> (light): 1.0:1.
+            <span class="t-mu">→ Lime only on dark grounds. Use text-link, which turns lime in dark mode.</span>
+
+<span class="t-er">✕ spec</span>      src/pages/Results.tsx:88
+            &lt;RecommendationCard&gt; without <span class="t-ln">source</span>.
+            <span class="t-mu">→ Required by docs/design-system/components/recommendation-card.md.</span>
+
+<span class="t-wa">! variant</span>   src/components/PartnerCard.tsx:12
+            Variant "sponsored" is not in the spec.
+            <span class="t-mu">→ Remove it or add it to the spec first.</span>
+
+<span class="t-mu">212 files scanned ·</span> <span class="t-er">3 errors</span> <span class="t-mu">·</span> <span class="t-wa">1 warning</span></div>
+          </div>
+          <div class="checks">
+            <div class="check"><b>Tokens</b><span>Every colour, space and radius must come from src/theme.css. Raw hex, rgb() and px values are flagged.</span></div>
+            <div class="check"><b>Contrast</b><span>Each token pairing used in the code is measured in both themes against WCAG AA.</span></div>
+            <div class="check"><b>Specs</b><span>Components must have the props their spec requires, such as a source on every recommendation.</span></div>
+            <div class="check"><b>Variants</b><span>Only variants listed in a spec are allowed. Anything new is flagged until the spec is updated.</span></div>
+          </div>
+          <figcaption>Instead of eyeballing, every build ends with a list of exactly what drifted, where, and which rule it broke. Small discrepancies get caught before they pile up across pages.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-process">
+    <div class="wrap">
+      <div class="rail"><p class="label">Process</p></div>
+      <div class="content">
+        <h2 id="h-process">Process</h2>
+        <div class="proc-step">
+          <h3>1. Setting up closed tokens</h3>
+          <p>Before cleaning up the tokens, the agent used colors in 3 different ways:</p>
+          <ol>
+            <li>Hardcoded hex values, e.g. <code>#45AB90</code></li>
+            <li>Primitive token</li>
+            <li>Semantic tokens I never defined, e.g. <code>text-status-good</code>, <code>text-status-critical</code></li>
+          </ol>
+          <p>All of them used everywhere with no clear logic.</p>
+        </div>
+
+        <figure class="fig">
+          <div class="ways">
+            <div class="way">
+              <div class="way-h"><span class="label">Way 1</span><b>Hardcoded hex</b></div>
+<pre><span class="css-cm">// ProgrammeCard.tsx</span>
+&lt;span style={{ color: <span class="css-cu">'#45AB90'</span> }}&gt;
+  Open for applications
+&lt;/span&gt;</pre>
+              <div class="way-f">A value with no name. Nothing tells the agent, or the next developer, what it means.</div>
+            </div>
+            <div class="way">
+              <div class="way-h"><span class="label">Way 2</span><b>Primitive token</b></div>
+<pre><span class="css-cm">// FilterBar.tsx</span>
+&lt;Button className=<span class="css-l1">"bg-blue-500</span>
+  <span class="css-l1">text-white"</span>&gt;
+  Programmes
+&lt;/Button&gt;</pre>
+              <div class="way-f">On the list, but used directly. It doesn’t switch in dark mode and says nothing about the colour’s job.</div>
+            </div>
+            <div class="way">
+              <div class="way-h"><span class="label">Way 3</span><b>Invented semantic token</b></div>
+<pre><span class="css-cm">// StatusBadge.tsx</span>
+&lt;Badge className=<span class="css-cu">"text-status-good"</span>&gt;
+&lt;Badge className=<span class="css-cu">"text-status-critical"</span>&gt;
+<span class="css-cm">// not defined anywhere</span></pre>
+              <div class="way-f">Looks right, but nothing defines it. The agent improvised a name, and it renders as nothing.</div>
+            </div>
+          </div>
+          <figcaption>Before: three ways of writing the same kind of colour, mixed across pages.</figcaption>
+        </figure>
+
+        <div class="proc-step">
+          <p>To fix this, I defined the color tokens in 2 layers in <code>theme.css</code>, so the agent can only use what’s on the list.</p>
+          <ul>
+            <li><strong>Layer 1, primitives.</strong> The raw color values: brand, neutral, and the system colours (success, warning, error, info).</li>
+            <li><strong>Layer 2, semantic.</strong> Tokens that describe what a color is for, each mapped to a primitive. I reused the shadcn semantic token names, so I wouldn’t break or rework the library. Where shadcn had no name I needed, like success foreground and muted, I defined my own.</li>
+          </ul>
+        </div>
+
+        <figure class="fig">
+          <div class="term">
+            <div class="win-bar"><i></i><i></i><i></i><span>src/theme.css</span></div>
+            <div class="term-body"><span class="css-cm">/* src/theme.css — the brand. Rebrand = edit THIS file only. */</span>
+:root {
+  <span class="css-cm">/* Layer 1 · FadäRhy design tokens: raw values */</span>
+  <span class="css-l1">--background</span>: #F2F2F2;   <span class="css-l1">--surface</span>: #FFFFFF;      <span class="css-l1">--section</span>: #F4F6FB;
+  <span class="css-l1">--line</span>: #E4E4EA;         <span class="css-l1">--line-strong</span>: #6B6B76;  <span class="css-l1">--ink</span>: #2A2A2A;
+  <span class="css-l1">--ink-muted</span>: #5C5C66;    <span class="css-l1">--rhine-blue</span>: #2446F5;   <span class="css-l1">--link</span>: #2446F5;
+  <span class="css-l1">--thread-lime</span>: #D6FF3F;  <span class="css-l1">--night</span>: #2A2A2A;         <span class="css-l1">--mist</span>: #EEF0E8;
+  <span class="css-l1">--error</span>: #B42318;        <span class="css-l1">--success</span>: #1A7F4B;       <span class="css-l1">--warning</span>: #8A5A00;
+
+  <span class="css-cm">/* Layer 2 · shadcn names → design-system tokens */</span>
+  <span class="css-l2">--foreground</span>: var(--ink);            <span class="css-l2">--card</span>: #FFFFFF;
+  <span class="css-l2">--primary</span>: var(--rhine-blue);        <span class="css-l2">--primary-foreground</span>: var(--on-rhine-blue);
+  <span class="css-l2">--muted</span>: var(--section);            <span class="css-l2">--muted-foreground</span>: var(--ink-muted);
+  <span class="css-l2">--destructive</span>: var(--error);        <span class="css-l2">--border</span>: var(--line);
+  <span class="css-l2">--ring</span>: var(--focus-ring);
+  <span class="css-cu">--btn-primary-bg-hover</span>: #1E3EDB;     <span class="css-cu">--aqua-wash</span>: #EEF6FB;   <span class="css-cm">/* custom */</span>
+}
+
+[data-theme="dark"] {
+  <span class="css-l1">--background</span>: #11120F;   <span class="css-l1">--surface</span>: #1C1D19;   <span class="css-l1">--ink</span>: #EEF0E8;
+  <span class="css-l1">--rhine-blue</span>: #D6FF3F;   <span class="css-l1">--link</span>: #D6FF3F;      <span class="css-cm">/* lime takes over the accent */</span>
+}</div>
+          </div>
+          <figcaption>After: one file, <code>src/theme.css</code>, with lines taken from the repo. Lime marks the raw design tokens, blue the shadcn names, and yellow the tokens I added myself. In dark mode the accent switches to Thread Lime.</figcaption>
+        </figure>
+
+        <figure class="fig">
+          <div class="ttwo">
+            <div class="tpanel"><h4 class="th">Color · Design tokens</h4><p class="tg">Surface</p><div class="tscroll"><table class="tt tp6"><thead><tr><th>Token</th><th>Light</th><th>Hex</th><th>Dark</th><th>Hex</th><th>OKLCH (light)</th></tr></thead><tbody><tr><td class="tk">background</td><td><span class="sw" style="background:#F2F2F2"></span></td><td>#F2F2F2</td><td><span class="sw" style="background:#11120F"></span></td><td>#11120F</td><td>oklch(0.961 0 0)</td></tr><tr><td class="tk">surface</td><td><span class="sw" style="background:#FFFFFF"></span></td><td>#FFFFFF</td><td><span class="sw" style="background:#1C1D19"></span></td><td>#1C1D19</td><td>oklch(1.000 0 0)</td></tr><tr><td class="tk">section</td><td><span class="sw" style="background:#F4F6FB"></span></td><td>#F4F6FB</td><td><span class="sw" style="background:#11120F"></span></td><td>#11120F</td><td>oklch(0.973 0.007 269)</td></tr><tr><td class="tk">line</td><td><span class="sw" style="background:#E4E4EA"></span></td><td>#E4E4EA</td><td><span class="sw" style="background:#2E3029"></span></td><td>#2E3029</td><td>oklch(0.921 0.008 286)</td></tr><tr><td class="tk">line-strong</td><td><span class="sw" style="background:#6B6B76"></span></td><td>#6B6B76</td><td><span class="sw" style="background:#7B8073"></span></td><td>#7B8073</td><td>oklch(0.532 0.017 286)</td></tr></tbody></table></div><p class="tg">Text</p><div class="tscroll"><table class="tt tp6"><thead><tr><th>Token</th><th>Light</th><th>Hex</th><th>Dark</th><th>Hex</th><th>OKLCH (light)</th></tr></thead><tbody><tr><td class="tk">ink</td><td><span class="sw" style="background:#2A2A2A"></span></td><td>#2A2A2A</td><td><span class="sw" style="background:#EEF0E8"></span></td><td>#EEF0E8</td><td>oklch(0.285 0 0)</td></tr><tr><td class="tk">ink-muted</td><td><span class="sw" style="background:#5C5C66"></span></td><td>#5C5C66</td><td><span class="sw" style="background:#A8AD9F"></span></td><td>#A8AD9F</td><td>oklch(0.478 0.016 286)</td></tr><tr><td class="tk">link</td><td><span class="sw" style="background:#2446F5"></span></td><td>#2446F5</td><td><span class="sw" style="background:#D6FF3F"></span></td><td>#D6FF3F</td><td>oklch(0.505 0.259 266)</td></tr></tbody></table></div><p class="tg">Brand</p><div class="tscroll"><table class="tt tp6"><thead><tr><th>Token</th><th>Light</th><th>Hex</th><th>Dark</th><th>Hex</th><th>OKLCH (light)</th></tr></thead><tbody><tr><td class="tk">rhine-blue</td><td><span class="sw" style="background:#2446F5"></span></td><td>#2446F5</td><td><span class="sw" style="background:#D6FF3F"></span></td><td>#D6FF3F</td><td>oklch(0.505 0.259 266)</td></tr><tr><td class="tk">rhine-blue-soft</td><td><span class="sw" style="background:#DCE4FE"></span></td><td>#DCE4FE</td><td><span class="sw" style="background:#2A3308"></span></td><td>#2A3308</td><td>oklch(0.921 0.036 272)</td></tr><tr><td class="tk">thread-lime</td><td><span class="sw" style="background:#D6FF3F"></span></td><td>#D6FF3F</td><td><span class="sw" style="background:#D6FF3F"></span></td><td>#D6FF3F</td><td>oklch(0.939 0.208 121)</td></tr><tr><td class="tk">night</td><td><span class="sw" style="background:#2A2A2A"></span></td><td>#2A2A2A</td><td><span class="sw" style="background:#2A2A2A"></span></td><td>#2A2A2A</td><td>oklch(0.285 0 0)</td></tr><tr><td class="tk">mist</td><td><span class="sw" style="background:#EEF0E8"></span></td><td>#EEF0E8</td><td><span class="sw" style="background:#EEF0E8"></span></td><td>#EEF0E8</td><td>oklch(0.951 0.011 118)</td></tr></tbody></table></div><p class="tg">System</p><div class="tscroll"><table class="tt tp6"><thead><tr><th>Token</th><th>Light</th><th>Hex</th><th>Dark</th><th>Hex</th><th>OKLCH (light)</th></tr></thead><tbody><tr><td class="tk">error</td><td><span class="sw" style="background:#B42318"></span></td><td>#B42318</td><td><span class="sw" style="background:#FF8A80"></span></td><td>#FF8A80</td><td>oklch(0.500 0.182 30)</td></tr><tr><td class="tk">error-soft</td><td><span class="sw" style="background:#FDECEA"></span></td><td>#FDECEA</td><td><span class="sw" style="background:#3A1613"></span></td><td>#3A1613</td><td>oklch(0.956 0.019 26)</td></tr><tr><td class="tk">success</td><td><span class="sw" style="background:#1A7F4B"></span></td><td>#1A7F4B</td><td><span class="sw" style="background:#6FD39A"></span></td><td>#6FD39A</td><td>oklch(0.528 0.121 155)</td></tr><tr><td class="tk">success-soft</td><td><span class="sw" style="background:#E6F4EC"></span></td><td>#E6F4EC</td><td><span class="sw" style="background:#11301F"></span></td><td>#11301F</td><td>oklch(0.955 0.018 161)</td></tr><tr><td class="tk">warning</td><td><span class="sw" style="background:#8A5A00"></span></td><td>#8A5A00</td><td><span class="sw" style="background:#F2C14E"></span></td><td>#F2C14E</td><td>oklch(0.508 0.108 73)</td></tr><tr><td class="tk">warning-soft</td><td><span class="sw" style="background:#FFF3D6"></span></td><td>#FFF3D6</td><td><span class="sw" style="background:#33280A"></span></td><td>#33280A</td><td>oklch(0.966 0.040 88)</td></tr><tr><td class="tk">info</td><td><span class="sw" style="background:#0B5ED7"></span></td><td>#0B5ED7</td><td><span class="sw" style="background:#8FB0FF"></span></td><td>#8FB0FF</td><td>oklch(0.515 0.200 260)</td></tr><tr><td class="tk">info-soft</td><td><span class="sw" style="background:#E3EEFF"></span></td><td>#E3EEFF</td><td><span class="sw" style="background:#112A66"></span></td><td>#112A66</td><td>oklch(0.946 0.026 259)</td></tr></tbody></table></div></div>
+            <div class="tpanel"><h4 class="th">Color · Semantic (shadcn)</h4><p class="tg">Surface</p><div class="tscroll"><table class="tt ts"><thead><tr><th>Token</th><th>Swatch</th><th>Design token</th><th>Light</th><th>Dark</th><th>Value</th></tr></thead><tbody><tr><td class="tk">--card</td><td><span class="sw" style="background:#FFFFFF"></span></td><td>surface</td><td>#FFFFFF</td><td>#1C1D19</td><td>var(--surface)</td></tr><tr><td class="tk">--popover</td><td><span class="sw" style="background:#FFFFFF"></span></td><td>surface</td><td>#FFFFFF</td><td>#1C1D19</td><td>var(--surface)</td></tr><tr><td class="tk">--secondary</td><td><span class="sw" style="background:#F4F6FB"></span></td><td>section</td><td>#F4F6FB</td><td>#11120F</td><td>var(--section)</td></tr><tr><td class="tk">--muted</td><td><span class="sw" style="background:#F4F6FB"></span></td><td>section</td><td>#F4F6FB</td><td>#11120F</td><td>var(--section)</td></tr><tr><td class="tk">--accent</td><td><span class="sw" style="background:#F4F6FB"></span></td><td>section</td><td>#F4F6FB</td><td>#11120F</td><td>var(--section)</td></tr><tr><td class="tk">--border</td><td><span class="sw" style="background:#E4E4EA"></span></td><td>line</td><td>#E4E4EA</td><td>#2E3029</td><td>var(--line)</td></tr><tr><td class="tk">--input</td><td><span class="sw" style="background:#E4E4EA"></span></td><td>line</td><td>#E4E4EA</td><td>#2E3029</td><td>var(--line)</td></tr></tbody></table></div><p class="tg">Text</p><div class="tscroll"><table class="tt ts"><thead><tr><th>Token</th><th>Swatch</th><th>Design token</th><th>Light</th><th>Dark</th><th>Value</th></tr></thead><tbody><tr><td class="tk">--foreground</td><td><span class="sw" style="background:#2A2A2A"></span></td><td>ink</td><td>#2A2A2A</td><td>#EEF0E8</td><td>var(--ink)</td></tr><tr><td class="tk">--card-foreground</td><td><span class="sw" style="background:#2A2A2A"></span></td><td>ink</td><td>#2A2A2A</td><td>#EEF0E8</td><td>var(--ink)</td></tr><tr><td class="tk">--muted-foreground</td><td><span class="sw" style="background:#5C5C66"></span></td><td>ink-muted</td><td>#5C5C66</td><td>#A8AD9F</td><td>var(--ink-muted)</td></tr></tbody></table></div><p class="tg">Brand / interactive</p><div class="tscroll"><table class="tt ts"><thead><tr><th>Token</th><th>Swatch</th><th>Design token</th><th>Light</th><th>Dark</th><th>Value</th></tr></thead><tbody><tr><td class="tk">--primary</td><td><span class="sw" style="background:#2446F5"></span></td><td>rhine-blue</td><td>#2446F5</td><td>#D6FF3F</td><td>var(--rhine-blue)</td></tr><tr><td class="tk">--primary-foreground</td><td><span class="sw" style="background:#FFFFFF"></span></td><td>on-rhine-blue</td><td>#FFFFFF</td><td>#2A2A2A</td><td>var(--on-rhine-blue)</td></tr><tr><td class="tk">--ring</td><td><span class="sw" style="background:#2446F5"></span></td><td>focus-ring</td><td>#2446F5</td><td>#D6FF3F</td><td>var(--focus-ring)</td></tr><tr><td class="tk">--destructive</td><td><span class="sw" style="background:#B42318"></span></td><td>error</td><td>#B42318</td><td>#FF8A80</td><td>var(--error)</td></tr></tbody></table></div></div>
+          </div>
+          <figcaption>Design tokens defined for both themes, and the shadcn semantic names mapped to them.</figcaption>
+        </figure>
+
+        <div class="proc-step">
+          <p>Typography follows the Material 3 type scale, from <code>md-display-large</code> down to <code>md-label-small</code>, set in Neue Frutiger. Corners use one 12px radius for buttons, cards and badges, and 8px for chips. Spacing stays on Tailwind’s defaults. What was missing was when to use each one, which the global mapping covers next.</p>
+        </div>
+
+        <div class="proc-step proc-next">
+          <h3>2. Global mapping</h3>
+          <p>With the tokens in place, the agent still didn’t know when to use which one.</p>
+          <p>I wrote the rules down in a markdown file. It covers color, typography, spacing, radius and shadow, and says what each token is for, so the agent doesn’t have to guess.</p>
+          <p>The values stay in <code>theme.css</code>, which is the source of truth. The mapping only holds the usage rules.</p>
+          <p>Here is a short excerpt as an example, showing the first 2 entries from each section:</p>
+        </div>
+
+        <figure class="fig">
+          <div class="win">
+            <div class="win-bar"><i></i><i></i><i></i><span>docs/design-system/tokens/design-tokens.md</span></div>
+            <div class="win-body">
+<span class="h"># Global mapping</span><br>
+<span class="m">Values live in src/theme.css. This file only says when to use each token.</span><br><br>
+<span class="h">## Color</span>
+<table class="mdtable"><thead><tr><th>Token</th><th>Use for</th><th>Not for</th></tr></thead><tbody><tr><td class="t">text-ink</td><td>Card titles, headings, body text</td><td>Labels and descriptions (use text-ink-muted)</td></tr><tr><td class="t">text-link</td><td>Links and numbers in stat cards</td><td>Body text</td></tr></tbody></table>
+<span class="h">## Typography</span>
+<table class="mdtable"><thead><tr><th>Token</th><th>Use for</th><th>Not for</th></tr></thead><tbody><tr><td class="t">md-display-large</td><td>The hero headline, bold, tracking −0.03em</td><td>Section titles (use md-headline-small)</td></tr><tr><td class="t">md-body-large</td><td>Hero lede and intro paragraphs</td><td>Card text (use card-desc)</td></tr></tbody></table>
+<span class="h">## Spacing</span>
+<table class="mdtable"><thead><tr><th>Token</th><th>Use for</th><th>Not for</th></tr></thead><tbody><tr><td class="t">py-[var(--section-pad)]</td><td>Vertical padding of every section (96px)</td><td>Card padding (use p-6)</td></tr><tr><td class="t">p-6</td><td>Inside every surface-card</td><td>Page gutters (use px-5 md:px-10)</td></tr></tbody></table>
+<span class="h">## Radius</span>
+<table class="mdtable"><thead><tr><th>Token</th><th>Use for</th><th>Not for</th></tr></thead><tbody><tr><td class="t">rounded-btn</td><td>Every button (12px)</td><td>Chips and tags (use rounded-chip, 8px)</td></tr><tr><td class="t">rounded-card</td><td>Cards and panels (12px)</td><td>Pills and avatars (use rounded-full)</td></tr></tbody></table>
+<span class="h">## Shadow</span>
+<table class="mdtable"><thead><tr><th>Token</th><th>Use for</th><th>Not for</th></tr></thead><tbody><tr><td class="t">shadow-step</td><td>Cards on grey or tinted sections</td><td>Cards on white sections (use a 1px line border)</td></tr><tr><td class="t">shadow-none</td><td>Everything in dark mode</td><td>—</td></tr></tbody></table>
+            </div>
+          </div>
+          <figcaption>An excerpt of the global mapping: two entries from each of the five sections. Every entry says what a token is for and what to use instead, so the choice is a lookup.</figcaption>
+        </figure>
+
+        <div class="proc-step proc-next">
+          <h3>3. Spec files</h3>
+          <p>Here is an example of a component spec:</p>
+        </div>
+
+        <figure class="fig">
+          <div class="panel tb-panel"><p class="label" style="margin-bottom:12px">TopBar · rendered variants</p><div class="tb-row"><span class="tb-label">default</span><div class="tb"><span class="tb-logo"><svg viewBox="0 0 40 20" aria-hidden="true"><path d="M3,15 C11,15 13,4 20,4 C27,4 29,13 37,13" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/><circle cx="3" cy="15" r="3" fill="var(--lime)" stroke="var(--night)" stroke-width="1.5"/><circle cx="37" cy="13" r="3" fill="var(--lime)" stroke="var(--night)" stroke-width="1.5"/></svg>FadäRhy</span><span class="tb-links"><span class="tb-link on">Explore</span><span class="tb-link">My route</span><span class="tb-link">Referrals</span><span class="tb-link">Saved</span></span><span class="tb-av" aria-hidden="true">TN</span></div></div><div class="tb-row"><span class="tb-label">flow</span><div class="tb"><span class="tb-logo"><svg viewBox="0 0 40 20" aria-hidden="true"><path d="M3,15 C11,15 13,4 20,4 C27,4 29,13 37,13" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/><circle cx="3" cy="15" r="3" fill="var(--lime)" stroke="var(--night)" stroke-width="1.5"/><circle cx="37" cy="13" r="3" fill="var(--lime)" stroke="var(--night)" stroke-width="1.5"/></svg>FadäRhy</span><span class="tb-step">Referral consent · step 2 of 3</span><span class="tb-x">Save and exit</span></div></div><div class="tb-row"><span class="tb-label">auth</span><div class="tb"><span class="tb-logo"><svg viewBox="0 0 40 20" aria-hidden="true"><path d="M3,15 C11,15 13,4 20,4 C27,4 29,13 37,13" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/><circle cx="3" cy="15" r="3" fill="var(--lime)" stroke="var(--night)" stroke-width="1.5"/><circle cx="37" cy="13" r="3" fill="var(--lime)" stroke="var(--night)" stroke-width="1.5"/></svg>FadäRhy</span><span class="tb-x">Sign in</span></div></div></div>
+          <div class="win">
+            <div class="win-bar"><i></i><i></i><i></i><span>docs/design-system/components/top-bar.md</span></div>
+            <div class="win-body">
+<span class="h"># TopBar</span><br>
+<br>
+<span class="h">### What it is</span><br>
+The persistent top-of-page navigation bar that orients founders within FadäRhy.<br><br>
+<span class="h">### Use when</span><br>
+- Rendering any app page — place it in the layout, not on individual pages.<br><br>
+<span class="h">### Don’t use when</span><br>
+- Building a page header with a title and actions — use <span class="t">`PageHeader`</span> instead.<br><br>
+<span class="m">---</span><br><br>
+<span class="h">## Anatomy</span><br>
+<table class="mdtable md3a"><thead><tr><th>Part</th><th>Optional</th><th>Purpose</th></tr></thead><tbody><tr><td class="t">Logo</td><td>No</td><td>Navigates to the founder home. On <span class="t">`auth`</span> it links to fadarhy.ch.</td></tr><tr><td class="t">Nav links</td><td>Yes</td><td>Only in <span class="t">`default`</span>. Shows the main sections: Explore, My route, Referrals, Saved.</td></tr><tr><td class="t">Active indicator</td><td>Yes</td><td>A <span class="t">`--highlight`</span> node under the current link, derived from the URL.</td></tr><tr><td class="t">Avatar</td><td>Yes</td><td>Only in <span class="t">`default`</span>. Links to the account page.</td></tr></tbody></table>
+<span class="m">---</span><br><br>
+<span class="h">## Variants</span><br>
+<table class="mdtable md2"><thead><tr><th>Variant</th><th>When to use</th></tr></thead><tbody><tr><td class="t"><span class="t">`default`</span></td><td>Signed-in app pages with full navigation.</td></tr><tr><td class="t"><span class="t">`flow`</span></td><td>Multi-step flows where nav links would distract, e.g. referral consent.</td></tr><tr><td class="t"><span class="t">`auth`</span></td><td>Signed-out pages: sign in, sign up, reset password.</td></tr></tbody></table>
+<span class="m">---</span><br><br>
+<span class="h">## Behavior</span><br>
+<span class="h">### Responsive</span><br>
+Nav links are hidden on mobile in <span class="t">`default`</span>. Mobile navigation is handled by <span class="t">`BottomNav`</span>.<br><br>
+The <span class="t">`flow`</span> variant is hidden on mobile (<span class="t">`hidden md:block`</span>); the flow shows its own step header.<br><br>
+<span class="m">---</span><br><br>
+<span class="h">## Tokens</span><br>
+- Background <span class="t">`--card`</span>, bottom border <span class="t">`--border`</span>.<br>
+- Links <span class="t">`--foreground`</span>, inactive links <span class="t">`--muted`</span>, focus <span class="t">`--ring`</span>.<br><br>
+<span class="m">---</span><br><br>
+<span class="h">## Best practices</span><br>
+- Never place <span class="t">`TopBar`</span> directly on a page component — it belongs in the layout.<br>
+- Use <span class="t">`default`</span> only when the founder is signed in and <span class="t">`user`</span> data is available.<br><br>
+<span class="m">---</span><br><br>
+<span class="h">## Implementation</span><br>
+- <span class="t">`user`</span> prop is only read by <span class="t">`default`</span> — safe to omit on <span class="t">`flow`</span> and <span class="t">`auth`</span>.<br>
+- Active link state is derived from <span class="t">`usePathname`</span> — no prop needed.<br><br>
+<span class="m">---</span><br><br>
+<span class="h">## Props</span><br>
+<table class="mdtable md4"><thead><tr><th>Prop</th><th>Variants</th><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td class="t"><span class="t">`variant`</span></td><td>all</td><td><span class="t">`'default' | 'flow' | 'auth'`</span></td><td>Required. Controls which parts render.</td></tr><tr><td class="t"><span class="t">`user`</span></td><td><span class="t">`default`</span></td><td><span class="t">`NavUser | null`</span></td><td>Optional. Populates the avatar.</td></tr><tr><td class="t"><span class="t">`className`</span></td><td>all</td><td>string</td><td>Optional. Passed to the root element.</td></tr></tbody></table>
+            </div>
+          </div>
+          <figcaption>The TopBar spec and the three variants it allows. The agent reads this before it touches navigation, so it picks the right variant and never invents a fourth.</figcaption>
+        </figure>
+
+        <div class="proc-step">
+          <p>Each section has a job:</p>
+          <ul>
+            <li><strong>What it is, Use when, Don’t use when:</strong> how the agent decides which component fits.</li>
+            <li><strong>Anatomy:</strong> the parts of the component, and which ones are optional.</li>
+            <li><strong>Sizes, variants:</strong> the versions that exist and when to apply each one. This stops the agent from picking one at random.</li>
+            <li><strong>States:</strong> the available states (e.g. hover, disabled, loading, error).</li>
+            <li><strong>Behavior:</strong> how it responds to screen size and device behaviour (e.g. keyboard type).</li>
+            <li><strong>Best practices:</strong> the rules I’d otherwise correct by hand.</li>
+            <li><strong>Implementation:</strong> notes on how it works in code, mostly for the agent.</li>
+            <li><strong>Props:</strong> what the agent can pass in, and what is required.</li>
+          </ul>
+          <p>I didn’t write these from scratch. I had Claude read the codebase and draft a first version of each spec from how the component was actually used, then I refined them one by one. It was faster to correct a draft than to start from a blank page.</p>
+          <p>Since the process repeats, I built a skill that drafts the first cut of a spec. You can download it in the <strong>Resources</strong> section.</p>
+        </div>
+
+        <div class="proc-step proc-next">
+          <h3>4. Project instructions and routing</h3>
+          <p>Everything above only works if the agent reads it. Without a standing instruction, each session starts cold and it never opens the global mapping or the specs.</p>
+          <p>So I put the rules in <code>CLAUDE.md</code>, which Claude Code loads at the start of every session. It does 3 jobs:</p>
+          <ol>
+            <li><strong>Routing.</strong> It tells the agent which files to read before touching UI: the design system index first, then the spec for any component it is about to use, then the token reference.</li>
+            <li><strong>Rules against drift.</strong> The spec is a constraint, not a suggestion. If a spec doesn’t cover a case, the agent flags the gap and asks.</li>
+            <li><strong>Audit step.</strong> It runs the audit script at the end of the build, and suggests fixes if it catches any drift.</li>
+          </ol>
+        </div>
+
+        <figure class="fig">
+          <div class="win">
+            <div class="win-bar"><i></i><i></i><i></i><span>CLAUDE.md</span></div>
+            <div class="win-body">
+<span class="h"># FadäRhy · design system rules</span><br>
+<span class="m">Loaded at the start of every session. Follow these before writing any UI.</span><br><br>
+<span class="h">## 1. Routing</span><br>
+Before touching UI, read in this order:<br>
+1. <span class="t">docs/design-system/index.md</span> <span class="m">— the index: what exists and where</span><br>
+2. <span class="t">docs/design-system/components/&lt;name&gt;.md</span> <span class="m">— for every component you are about to use</span><br>
+3. <span class="t">docs/design-system/tokens/design-tokens.md</span> <span class="m">— the token reference</span><br><br>
+<span class="h">## 2. Rules against drift</span><br>
+- A spec is a constraint, not a suggestion. Follow its variants, states and props exactly.<br>
+- Use only tokens defined in <span class="t">theme.css</span>. No hex values, no primitives, no new names.<br>
+- If a spec doesn’t cover the case: stop, flag the gap, and ask. Do not improvise.<br><br>
+<span class="h">## 3. Audit step</span><br>
+- At the end of every build, run <span class="t">npm run audit:design</span>.<br>
+- Report each finding with its file, line and suggested fix.<br>
+- Don’t call the task done until the audit is clean or I have confirmed the exceptions.
+            </div>
+          </div>
+          <figcaption><code>CLAUDE.md</code>, organised by its three jobs. It is short on purpose: it routes the agent to the files that hold the detail.</figcaption>
+        </figure>
+
+        <div class="proc-step proc-next">
+          <h3>5. Audit script</h3>
+          <p>Rules only help if someone checks them. For FadäRhy that check is a script, <code>scripts/token-audit.js</code>. After every build it reads through the components and pages and looks for three kinds of drift: raw colour values, primitives used where a semantic token belongs, and token names that <code>theme.css</code> never defines.</p>
+          <p>Every finding comes with the file, the line, what it found and the token to use instead. Because <code>CLAUDE.md</code> makes the audit the last step of each build, drift is caught in the same session that introduced it.</p>
+        </div>
+
+        <figure class="fig">
+          <div class="term">
+            <div class="win-bar"><i></i><i></i><i></i><span>node scripts/token-audit.js</span></div>
+            <div class="term-body" style="white-space:normal"><p style="margin:0 0 10px;color:#ff9a90;font-weight:700">ERRORS (3)</p>
+<div style="overflow-x:auto"><table class="audit">
+<thead><tr><th>File</th><th>Line</th><th>Found</th><th>Suggestion</th></tr></thead>
+<tbody>
+<tr><td class="f">src/components/programmes/programme-card.tsx</td><td>42</td><td class="v">#2446F5</td><td class="s">Raw colour. Use a semantic token: --primary for fills, --foreground for text.</td></tr>
+<tr><td class="f">src/components/assemblio/Hero.tsx</td><td>18</td><td class="v">bg-blue-600</td><td class="s">Tailwind palette colour, not a FadäRhy token. Use bg-primary.</td></tr>
+<tr><td class="f">src/app/referrals/page.tsx</td><td>91</td><td class="v">text-status-good</td><td class="s">Token not defined in theme.css. Use text-success.</td></tr>
+</tbody></table></div></div>
+          </div>
+          <figcaption>Each finding names the value it found and the token that should replace it.</figcaption>
+        </figure>
+
+        <div class="proc-step proc-next">
+          <h3>Setup output</h3>
+          <p>With every part in place, the FadäRhy codebase came out of the clean-up with:</p>
+          <ul>
+            <li><span class="fill">[number]</span> hard-coded colours replaced with semantic tokens</li>
+            <li><span class="fill">[number]</span> improvised colour names removed and mapped to defined tokens</li>
+            <li><span class="fill">[number]</span> specs written: <span class="fill">[n]</span> page templates, <span class="fill">[n]</span> components and <span class="fill">[n]</span> patterns</li>
+            <li>A drift check that runs at the end of every build</li>
+          </ul>
+          <p>This is the FadäRhy landing page repository, <a href="https://github.com/trudy-pro/Fadarhy-landing-page">trudy-pro/Fadarhy-landing-page</a>:</p>
+        </div>
+
+        <figure class="fig">
+          <pre class="asciitree" aria-label="FadäRhy landing page repository">fadarhy-landing-page/
+├── DESIGN.md                     <span class="css-cm"># Design notes (still the template text)</span>
+├── components.json               <span class="css-cm"># shadcn config</span>
+├── public/fonts/                 <span class="css-cm"># Neue Frutiger, self-hosted</span>
+└── src/
+    ├── theme.css                 <span class="css-cm"># Closed tokens: the brand, light + dark</span>
+    ├── styles.css                <span class="css-cm"># Type scale, card system, utilities</span>
+    ├── data/content.ts           <span class="css-cm"># Copy for every section</span>
+    ├── routes/
+    │   ├── __root.tsx            <span class="css-cm"># Fonts and page head</span>
+    │   └── index.tsx             <span class="css-cm"># The landing page</span>
+    └── components/
+        ├── ui/                   <span class="css-cm"># shadcn/ui components</span>
+        └── assemblio/            <span class="css-cm"># Page sections</span>
+            ├── Header.tsx
+            ├── Hero.tsx
+            ├── HowItWorks.tsx
+            ├── Finds.tsx
+            ├── Principles.tsx
+            ├── Pilot.tsx
+            ├── Journey.tsx
+            ├── Team.tsx
+            ├── NameStory.tsx
+            ├── Faq.tsx
+            ├── JoinPilot.tsx
+            └── SiteFooter.tsx</pre>
+          <figcaption>The brand lives in one file, <code>src/theme.css</code>; layout and type utilities live in <code>src/styles.css</code>.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <section class="block" aria-labelledby="h-next">
+    <div class="wrap">
+      <div class="rail"><p class="label">Outcome</p></div>
+      <div class="content">
+        <h2 id="h-next">Where it stands</h2>
+        <div class="grid2">
+          <div class="cell"><p class="label">Delivered</p><p>One brand file, <code>src/theme.css</code>, that replaces the scattered versions: two themes, the Material 3 type scale in Neue Frutiger, one 12px corner, and shadcn/ui re-themed through semantic names. All text pairings pass WCAG AA except success text on its tint (4.4:1), which is next to fix.</p></div>
+          <div class="cell"><p class="label">Next</p><p>Replace the raster logo crops with vector files. Add navigation, form inputs and search. Then apply the system to the live beta at app.fadarhy.ch, using the dark-mode prompt as the first agent-built feature.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="block" aria-labelledby="h-test">
+    <div class="wrap">
+      <div class="rail"><p class="label">Testing</p></div>
+      <div class="content">
+        <h2 id="h-test">Testing the setup</h2>
+        <p>These are notes from building the FadäRhy system with Claude, not a controlled experiment. They show where the setup earned its place and where it still slips.</p>
+
+        <div class="proc-step">
+          <h3>What works</h3>
+          <p><strong>Real sources beat good guesses.</strong> In the first attempt the agent could read the site’s copy but not its stylesheet, so it invented a deep teal brand colour. Once it had the brand sheet, every brand value came out exact. That gap is the reason the routing step exists.</p>
+          <p><strong>The contrast check finds what I would miss.</strong> Measuring every pairing in code surfaced two problems I wouldn’t have spotted by eye:</p>
+          <ul>
+            <li><strong>A brighter Rhine Blue as small text on its own tint</strong> was 4.2:1, just under AA. Going back to the brand sheet’s #2446F5 fixed it: 5.1:1 on the same tint.</li>
+            <li><strong>Thread Lime on Mist</strong> was 1.0:1, effectively invisible. That became the rule that lime only sits on dark or blue grounds.</li>
+          </ul>
+          <p><strong>Rendering both themes catches layout bugs.</strong> Screenshots of every component in light and dark caught squashed thread nodes and step labels that didn’t sit under their nodes, before anyone saw them.</p>
+        </div>
+
+        <div class="proc-step proc-next">
+          <h3>What doesn’t quite work yet</h3>
+          <p><strong>A written rule is not always a followed rule.</strong> The brand book already said lime never sits on Mist, yet the first cover drawing put a lime block straight on it. The render check caught it, not the rule. My guess is the rule needs to be phrased as a hard check, not as guidance.</p>
+          <p><strong>Starting early created two versions.</strong> Because the first draft came before the brand sheet, there were briefly two design systems that had to be merged. That is exactly the kind of drift the setup is meant to prevent.</p>
+          <p><strong>It costs time.</strong> Every change is followed by a contrast run and a render in both themes. It is slower than eyeballing, but each round ends with a list of facts instead of a feeling.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-open">
+    <div class="wrap">
+      <div class="rail"><p class="label">Open questions</p></div>
+      <div class="content">
+        <h2 id="h-open">What I’m still working out</h2>
+        <ol class="problems">
+          <li>
+            <h3>How do I turn guidance into a check?</h3>
+            <p>“Lime never on Mist” was written down and still broken once. The rules that held were the ones a script could measure. I want to find out how many brand rules can move from the README into the audit.</p>
+          </li>
+          <li>
+            <h3>Where does Figma fit?</h3>
+            <p>FadäRhy’s decisions now live in <code>theme.css</code>, the specs and the code. The team still sketches in Figma. Keeping Figma variables in sync with the tokens, and deciding which side wins when they disagree, is the next gap to close.</p>
+          </li>
+          <li>
+            <h3>Who owns the rules on a team of five?</h3>
+            <p>Right now I update the specs. As more of the team builds with AI, someone has to approve changes to a spec, the same way code changes get reviewed. A pull request per rule change is my first idea.</p>
+          </li>
+          <li>
+            <h3>Can one source serve both readers?</h3>
+            <p>Agents read markdown and JSON; people prefer a browsable page. The published FadäRhy design system is my answer for now: the same tokens and specs, rendered with live previews. I want to see whether the team actually opens it.</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-close">
+    <div class="wrap">
+      <div class="rail"><p class="label">Closing</p></div>
+      <div class="content">
+        <h2 id="h-close">Closing</h2>
+        <div class="prose">
+          <p>Giving the agent a closed list, written rules and a check at the end changed how I work with it. I spend less time repeating corrections and more time deciding what the rules should be.</p>
+          <p>For FadäRhy the effort pays off because the product is shared: designers, developers and AI assistants all touch the same screens. On a one-person prototype I would keep it lighter, with tokens and an audit first and specs only for the components that keep drifting.</p>
+          <p>If you build with AI and a design system too, I’d like to compare notes on how you keep the two in step.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>FadäRhy · Basel-first, Swiss-wide</span>
+    <a href="#">Back to top ↑</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var T = {
+    light: { 'background':'#f2f2f2', 'surface':'#ffffff', 'section':'#f4f6fb', 'line':'#e4e4ea', 'line-strong':'#6b6b76', 'ink':'#2a2a2a', 'ink-muted':'#5c5c66', 'rhine-blue':'#2446f5', 'rhine-blue-soft':'#dce4fe', 'on-rhine-blue':'#ffffff', 'link':'#2446f5', 'focus-ring':'#2446f5', 'thread-lime':'#d6ff3f', 'on-thread-lime':'#2a2a2a', 'night':'#2a2a2a', 'mist':'#eef0e8', 'error':'#b42318', 'error-soft':'#fdecea', 'success':'#1a7f4b', 'success-soft':'#e6f4ec', 'warning':'#8a5a00', 'warning-soft':'#fff3d6', 'info':'#0b5ed7', 'info-soft':'#e3eeff', 'white':'#ffffff' },
+    dark: { 'background':'#11120f', 'surface':'#1c1d19', 'section':'#11120f', 'line':'#2e3029', 'line-strong':'#7b8073', 'ink':'#eef0e8', 'ink-muted':'#a8ad9f', 'rhine-blue':'#d6ff3f', 'rhine-blue-soft':'#2a3308', 'on-rhine-blue':'#2a2a2a', 'link':'#d6ff3f', 'focus-ring':'#d6ff3f', 'thread-lime':'#d6ff3f', 'on-thread-lime':'#2a2a2a', 'night':'#2a2a2a', 'mist':'#eef0e8', 'error':'#ff8a80', 'error-soft':'#3a1613', 'success':'#6fd39a', 'success-soft':'#11301f', 'warning':'#f2c14e', 'warning-soft':'#33280a', 'info':'#8fb0ff', 'info-soft':'#112a66', 'white':'#ffffff' }
+  };
+  function lum(h) { h = h.replace('#',''); var c = [0,2,4].map(function (i) { var x = parseInt(h.substr(i,2),16)/255; return x <= 0.03928 ? x/12.92 : Math.pow((x+0.055)/1.055, 2.4); }); return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2]; }
+  function ratio(a, b) { var x = lum(a), y = lum(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); }
+  function fmt(r) { return (Math.floor(r*10)/10).toFixed(1) + ':1'; }
+
+  var SW = [
+    ['rhine-blue','Primary · blue, lime in dark', 3], ['thread-lime','Brand · nodes, dark accent', 3], ['night','Brand · announcement bar', 0], ['mist','Brand · text on night', 0],
+    ['background','Page', 0], ['surface','Cards, white sections', 0], ['section','Tinted sections', 0], ['ink','Text', 4.5], ['ink-muted','Secondary text', 4.5],
+    ['link','Links, blue text', 4.5], ['rhine-blue-soft','Selected, info', 0], ['error','Errors', 4.5], ['success','Success', 4.5], ['warning','Warnings', 4.5]
+  ];
+  var spec = document.getElementById('spec');
+  if (spec) {
+  function apply(mode) {
+    var t = T[mode];
+    var map = { '--sb': t.background, '--ss': t.surface, '--sl': t.line, '--sls': t['line-strong'], '--si': t.ink, '--sm': t['ink-muted'],
+      '--sblue': t['rhine-blue'], '--sonb': t['on-rhine-blue'], '--slink': t.link, '--ssoft': t['rhine-blue-soft'], '--sfocus': t['focus-ring'] };
+    for (var k in map) spec.style.setProperty(k, map[k]);
+    document.getElementById('swatches').innerHTML = SW.map(function (s) {
+      var hex = t[s[0]], r = ratio(hex, t.background), need = s[2];
+      var badge = need ? '<span class="ratio' + (r < need ? ' bad' : '') + '" title="' + (r < need ? 'Below ' + need + ':1 on the background — not allowed here' : 'Passes ' + need + ':1') + '">' + fmt(r) + (r < need ? ' ✕' : ' ✓') + '</span>' : '';
+      return '<div class="sw"><div class="chip" style="background:' + hex + '">' + badge + '</div><div class="info"><span class="nm">' + s[0] + '</span><span class="hx">' + hex.toUpperCase() + ' · ' + s[1] + '</span></div></div>';
+    }).join('');
+    var line = mode === 'dark' ? t['rhine-blue'] : t['rhine-blue'];
+    var steps = ['Question', 'Who helps', 'Where to go', 'Next step'], cur = 1;
+    var pts = [[16,70],[112,22],[208,58],[304,22]], d = 'M16,70';
+    for (var i = 1; i < pts.length; i++) { var a = pts[i-1], b = pts[i], dx = (b[0]-a[0])/2; d += ' C' + (a[0]+dx) + ',' + a[1] + ' ' + (b[0]-dx) + ',' + b[1] + ' ' + b[0] + ',' + b[1]; }
+    var svg = '<svg viewBox="0 0 320 120" role="img" aria-label="Route: step 2 of 4, Who helps"><path d="' + d + '" fill="none" stroke="' + line + '" stroke-width="7" stroke-linecap="round"/>';
+    pts.forEach(function (p, k) { svg += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (k === cur ? 10 : 7) + '" fill="#D6FF3F" stroke="#2A2A2A" stroke-width="3"/>'; });
+    steps.forEach(function (s, k) {
+      var anchor = k === 0 ? 'start' : (k === steps.length - 1 ? 'end' : 'middle');
+      svg += '<text x="' + pts[k][0] + '" y="102" text-anchor="' + anchor + '" font-family="Neue Frutiger, Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="' + (k === cur ? 700 : 400) + '" fill="' + (k === cur ? t.ink : t['ink-muted']) + '">' + s + '</text>';
+    });
+    document.getElementById('thread').innerHTML = svg + '</svg>';
+    var ok = 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.5 14.5-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4z', warn = 'M12 2 1 21h22zm1 15h-2v-2h2zm0-4h-2V9h2z';
+    var so = document.getElementById('st-ok'), sw = document.getElementById('st-warn');
+    so.style.background = t['success-soft']; so.style.color = t.ink;
+    so.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="' + t.success + '" d="' + ok + '"/></svg><div><b>Referral sent.</b>You’ll see the programme’s reply here.</div>';
+    sw.style.background = t['warning-soft']; sw.style.color = t.ink;
+    sw.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="' + t.warning + '" d="' + warn + '"/></svg><div><b>Source not checked in 90 days.</b>Confirm the details before you apply.</div>';
+    ['light','dark'].forEach(function (m) { document.getElementById('mode-' + m).setAttribute('aria-pressed', String(m === mode)); });
+  }
+  var chips = document.getElementById('chips');
+  ['People','Programmes','Expertise','Laboratories','Funding'].forEach(function (k, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'chipb'; b.id = 'chip-' + k.toLowerCase(); b.textContent = k;
+    b.setAttribute('aria-pressed', String(i === 1));
+    b.addEventListener('click', function () { b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); });
+    chips.appendChild(b);
+  });
+  document.querySelectorAll('.seg button').forEach(function (b) { b.addEventListener('click', function () { apply(b.dataset.mode); }); });
+  var start = 'light';
+  try { if (document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches)) start = 'dark'; } catch (e) {}
+  apply(start);
+  }
+  document.querySelectorAll('a[href="#"]').forEach(function (a) { a.addEventListener('click', function (e) { if (!a.closest('.top') && !a.closest('footer')) e.preventDefault(); }); });
+
+  var P = [
+    ['ink','background','Body text',4.5], ['ink-muted','background','Secondary text',4.5], ['link','background','Links',4.5],
+    ['link','rhine-blue-soft','Links on the tint',4.5], ['on-rhine-blue','rhine-blue','Primary button label',4.5], ['on-thread-lime','thread-lime','Lime button label',4.5],
+    ['thread-lime','night','Lime node on night',3], ['rhine-blue','background','Primary fill, thread line',3], ['line-strong','background','Input borders',3],
+    ['focus-ring','background','Focus ring',3], ['error','surface','Error text',4.5], ['success','surface','Success text',4.5], ['success','success-soft','Success on its tint',4.5],
+    ['warning','surface','Warning text',4.5], ['thread-lime','mist','Lime on Mist (forbidden)',3]
+  ];
+  if (document.getElementById('a11y')) document.getElementById('a11y').innerHTML = P.map(function (p) {
+    function cell(m) { var r = ratio(T[m][p[0]], T[m][p[1]]), okk = r >= p[3]; return '<td class="num">' + fmt(r) + ' <span class="' + (okk ? 'pass' : 'fail') + '">' + (okk ? 'Pass' : 'Fail') + '</span></td>'; }
+    return '<tr><td><span class="dotc" style="background:' + T.light[p[0]] + '"></span>' + p[0] + ' on ' + p[1] + '</td><td>' + p[2] + '</td>' + cell('light') + cell('dark') + '<td class="num">' + p[3] + ':1</td></tr>';
+  }).join('');
+
+  var copy = document.getElementById('copy');
+  if (copy) copy.addEventListener('click', function () {
+    var txt = document.getElementById('prompt').textContent;
+    var done = function () { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy excerpt'; }, 1800); };
+    try { navigator.clipboard.writeText(txt).then(done, function () { selectIt(); }); } catch (e) { selectIt(); }
+    function selectIt() { var r = document.createRange(); r.selectNodeContents(document.getElementById('prompt')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); copy.textContent = 'Selected — press ⌘C'; }
+  });
+})();
+</script>
+</body>
+</html>
